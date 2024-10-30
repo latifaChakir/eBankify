@@ -1,6 +1,6 @@
-package com.example.ebankify.bean.entities;
+package com.example.ebankify.domain.entities;
 
-import com.example.ebankify.bean.enums.Role;
+import com.example.ebankify.domain.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;

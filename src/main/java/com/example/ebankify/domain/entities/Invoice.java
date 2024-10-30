@@ -1,4 +1,4 @@
-package com.example.ebankify.bean.entities;
+package com.example.ebankify.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
