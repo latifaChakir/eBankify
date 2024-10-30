@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ebankify
+    username: postgres
+    password: latifa
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      format-sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml

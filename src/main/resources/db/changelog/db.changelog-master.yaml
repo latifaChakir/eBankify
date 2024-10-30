@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/30-01-changelog.yaml
+  - changeSet:
+        id: insert-users
+        author: LATIFACHAKIR
+        changes:
+          - sqlFile:
+              path: db.data/insert_users.sql
+              relativeToChangelogFile: true
+

@@ -1,0 +1,252 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1730282964247-5
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: age
+                  type: INT
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: monthly_income
+                  type: DOUBLE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: credit_score
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: role
+                  type: VARCHAR(255)
+            tableName: users
+
+  - changeSet:
+      id: 1730282964247-1
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_accounts
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: balance
+                  type: DOUBLE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: account_number
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: user_id
+                  type: BIGINT
+            tableName: accounts
+
+  - changeSet:
+      id: 1730282964247-2
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_invoices
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: amount_due
+                  type: DOUBLE
+              - column:
+                  name: due_date
+                  type: DATETIME
+              - column:
+                  name: user_id
+                  type: BIGINT
+            tableName: invoices
+
+  - changeSet:
+      id: 1730282964247-3
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_loans
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: principal
+                  type: DOUBLE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: interest_rate
+                  type: DOUBLE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: term_months
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: approved
+                  type: BOOLEAN
+              - column:
+                  name: user_id
+                  type: BIGINT
+            tableName: loans
+
+  - changeSet:
+      id: 1730282964247-4
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_transactions
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: type
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: amount
+                  type: DOUBLE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: account_id
+                  type: BIGINT
+            tableName: transactions
+
+  - changeSet:
+      id: 1730282964247-6
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: account_number
+            constraintName: uc_accounts_accountnumber
+            tableName: accounts
+
+  - changeSet:
+      id: 1730282964247-7
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: email
+            constraintName: uc_users_email
+            tableName: users
+
+  - changeSet:
+      id: 1730282964247-8
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: accounts
+            constraintName: FK_ACCOUNTS_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+
+  - changeSet:
+      id: 1730282964247-9
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: invoices
+            constraintName: FK_INVOICES_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+
+  - changeSet:
+      id: 1730282964247-10
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: loans
+            constraintName: FK_LOANS_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+
+  - changeSet:
+      id: 1730282964247-11
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: account_id
+            baseTableName: transactions
+            constraintName: FK_TRANSACTIONS_ON_ACCOUNT
+            referencedColumnNames: id
+            referencedTableName: accounts
