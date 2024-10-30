@@ -29,6 +29,10 @@ public class Transaction {
     @NotNull(message = "Le statut de la transaction ne peut pas être nul")
     private TransactionStatus status;
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @JoinColumn(name = "source_account_id")
+    private Account sourceAccount;
+
+    @ManyToOne
+    @JoinColumn(name = "destination_account_id")
+    private Account destinationAccount;
 }

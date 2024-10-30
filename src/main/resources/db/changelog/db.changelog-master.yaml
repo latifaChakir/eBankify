@@ -1,6 +1,8 @@
 databaseChangeLog:
   - include:
       file: db/changelog/30-01-changelog.yaml
+  - include:
+      file: db/changelog/30-02-changelog.yaml
   - changeSet:
         id: insert-users
         author: LATIFACHAKIR
@@ -8,4 +10,31 @@ databaseChangeLog:
           - sqlFile:
               path: db.data/insert_users.sql
               relativeToChangelogFile: true
-
+  - changeSet:
+        id: insert-accounts
+        author: LATIFACHAKIR
+        changes:
+          - sqlFile:
+              path: db.data/insert_accounts.sql
+              relativeToChangelogFile: true
+  - changeSet:
+      id: insert-transactions
+      author: LATIFACHAKIR
+      changes:
+        - sqlFile:
+            path: db.data/insert_transactions.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: insert-invoices
+      author: LATIFACHAKIR
+      changes:
+        - sqlFile:
+            path: db.data/insert_invoices.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: insert-loans
+      author: LATIFACHAKIR
+      changes:
+        - sqlFile:
+            path: db.data/insert_loans.sql
+            relativeToChangelogFile: true

@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1730287670465-1
+      author: Youcode
+      changes:
+        - addColumn:
+            tableName: transactions
+            columns:
+              - column:
+                  name: source_account_id
+                  type: BIGINT
+              - column:
+                  name: destination_account_id
+                  type: BIGINT
+
+        - addForeignKeyConstraint:
+            baseColumnNames: source_account_id
+            baseTableName: transactions
+            constraintName: FK_TRANSACTIONS_SOURCE_ACCOUNT
+            referencedColumnNames: id
+            referencedTableName: accounts
+
+        - addForeignKeyConstraint:
+            baseColumnNames: destination_account_id
+            baseTableName: transactions
+            constraintName: FK_TRANSACTIONS_DESTINATION_ACCOUNT
+            referencedColumnNames: id
+            referencedTableName: accounts
