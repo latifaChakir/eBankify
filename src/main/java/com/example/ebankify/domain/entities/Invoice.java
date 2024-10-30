@@ -1,7 +1,6 @@
 package com.example.ebankify.domain.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +18,6 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Min(value = 0, message = "Le montant dû ne peut pas être négatif")
     private double amountDue;
     @Column(name = "due_date")
     private Date dueDate;
