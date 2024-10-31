@@ -1,9 +1,7 @@
 package com.example.ebankify.domain.requests;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.example.ebankify.domain.enums.Role;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +25,12 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
-    private String role;
+    @NotNull(message = "Le revenu mensuel ne peut pas être nul")
+    private double monthlyIncome;
+    @NotNull(message = "Le score de crédit ne peut pas être nul")
+    private int creditScore;
+    @NotNull(message = "Le rôle ne peut pas être nul")
+    private Role role;
+
 
 }

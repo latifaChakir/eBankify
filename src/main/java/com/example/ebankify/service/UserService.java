@@ -32,7 +32,9 @@ public class UserService {
                 .age(registerRequest.getAge())
                 .email(registerRequest.getEmail())
                 .password(BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt()))
-                .role(Role.valueOf(registerRequest.getRole().toUpperCase()))  // Adapter le rôle
+                .monthlyIncome(registerRequest.getMonthlyIncome())
+                .creditScore(registerRequest.getCreditScore())
+                .role(Role.valueOf(String.valueOf(registerRequest.getRole()).toUpperCase()))
                 .build();
 
         User savedUser = userRepository.save(user);

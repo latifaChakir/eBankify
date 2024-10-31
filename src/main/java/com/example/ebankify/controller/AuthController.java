@@ -6,15 +6,16 @@ import com.example.ebankify.domain.requests.RegisterRequest;
 import com.example.ebankify.domain.responses.UserResponse;
 import com.example.ebankify.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:8080")
+@AllArgsConstructor
 public class AuthController {
-    @Autowired
     private UserService userService;
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
