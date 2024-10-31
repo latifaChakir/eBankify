@@ -23,5 +23,6 @@ public class User {
     private String password;
     private double monthlyIncome;
     private int creditScore;
+    @Enumerated(EnumType.STRING)
     private Role role;
 }

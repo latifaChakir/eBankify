@@ -1,5 +1,6 @@
 package com.example.ebankify.domain.responses;
 
+import com.example.ebankify.domain.dtos.AccountDTO;
 import com.example.ebankify.domain.dtos.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,8 +14,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse {
-    private UserDto user;
+public class AccountResponse {
+    private AccountDTO account;
     private String message;
     private int statusCode;
+    private List<AccountDTO> accounts;
 }
