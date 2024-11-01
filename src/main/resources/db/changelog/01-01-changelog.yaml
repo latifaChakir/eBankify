@@ -12,4 +12,5 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: true
+                    defaultValue: 'UNPAID'
 

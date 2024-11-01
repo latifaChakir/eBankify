@@ -15,6 +15,6 @@ public class InvoiceDTO {
     private Long id;
     private double amountDue;
     private Date dueDate;
-    private Long userId;
+    private UserDto user;
     private InvoiceStatus status;
 }
