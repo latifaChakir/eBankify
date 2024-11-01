@@ -1,5 +1,6 @@
 package com.example.ebankify.domain.entities;
 
+import com.example.ebankify.domain.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,8 @@ public class Invoice {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Enumerated(EnumType.STRING)
+    private InvoiceStatus status;
 
 
 }

@@ -38,3 +38,5 @@ databaseChangeLog:
         - sqlFile:
             path: db.data/insert_loans.sql
             relativeToChangelogFile: true
+  - include:
+      file: db/changelog/01-01-changelog.yaml

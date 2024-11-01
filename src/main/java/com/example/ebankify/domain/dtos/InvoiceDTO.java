@@ -1,4 +1,5 @@
 package com.example.ebankify.domain.dtos;
+import com.example.ebankify.domain.enums.InvoiceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +16,5 @@ public class InvoiceDTO {
     private double amountDue;
     private Date dueDate;
     private Long userId;
+    private InvoiceStatus status;
 }

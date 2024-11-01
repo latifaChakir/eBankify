@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1730473016294-3
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            tableName: invoices
+            columns:
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+

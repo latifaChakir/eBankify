@@ -1,4 +1,5 @@
 package com.example.ebankify.domain.requests;
+import com.example.ebankify.domain.enums.InvoiceStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,4 +23,6 @@ public class InvoiceRequest {
 
     @NotNull(message = "L'identifiant de l'utilisateur ne peut pas être nul")
     private Long userId;
+    @NotNull(message = "L'état de l'invoice ne peut pas être nul")
+    private InvoiceStatus status;
 }
