@@ -14,5 +14,5 @@ public class LoanDTO {
     private double interestRate;
     private int termMonths;
     private boolean approved;
-    private Long userId;
+    private UserDto user;
 }

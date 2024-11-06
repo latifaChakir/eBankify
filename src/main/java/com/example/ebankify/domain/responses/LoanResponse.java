@@ -6,12 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoanResponse {
-    private LoanDTO loanDTO;
+    private LoanDTO loan;
     private String message;
     private int statusCode;
+    private List<LoanDTO> loans;
 }
