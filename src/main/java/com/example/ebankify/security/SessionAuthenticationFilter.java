@@ -45,7 +45,6 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Role role = (Role) session.getAttribute("role");
-        System.out.println("Role from session: " + role);
         if (role == null || !RolePermissions.hasPermission(role.name(), servletPath)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: Insufficient permissions");
             return;

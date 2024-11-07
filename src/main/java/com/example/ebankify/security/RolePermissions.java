@@ -32,11 +32,8 @@ public class RolePermissions {
     }
 
     public static boolean hasPermission(String role, String servletPath) {
-        System.out.println("Role: " + role);
-        System.out.println("Requested Path: " + servletPath);
-        return permissionsMap.containsKey(role) && permissionsMap.get(role).stream().anyMatch(pattern ->
-                servletPath.matches(pattern.replace("{id}", "\\d+").replace("*", ".*"))
-        );
+        System.out.println("Checking permission for role: " + role + " on path: " + servletPath);
+        return permissionsMap.containsKey(role) && permissionsMap.get(role).contains(servletPath);
     }
 
 }
