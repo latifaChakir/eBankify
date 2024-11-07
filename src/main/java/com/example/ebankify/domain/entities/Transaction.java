@@ -23,10 +23,12 @@ public class Transaction {
     private double amount;
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "source_account_id")
     private Account sourceAccount;
-    @ManyToOne
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "destination_account_id")
     private Account destinationAccount;
+
 }

@@ -6,6 +6,7 @@ import com.example.ebankify.domain.enums.Role;
 import com.example.ebankify.domain.requests.LoginRequest;
 import com.example.ebankify.domain.requests.RegisterRequest;
 import com.example.ebankify.domain.requests.UserRequest;
+import com.example.ebankify.exception.UserNotFoundException;
 import com.example.ebankify.mapper.UserMapper;
 import com.example.ebankify.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
@@ -72,6 +73,10 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
+        if (userRepository.findById(id).isEmpty()) {
+            throw new UserNotFoundException("User not found");
+        }
+        System.out.println("id pour supprimer "+id);
         userRepository.deleteById(id);
     }
 

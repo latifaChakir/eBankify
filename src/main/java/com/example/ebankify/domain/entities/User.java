@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "users")
@@ -25,4 +27,13 @@ public class User {
     private int creditScore;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Account> accounts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Invoice> invoices;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Loan> loans;
+
 }
