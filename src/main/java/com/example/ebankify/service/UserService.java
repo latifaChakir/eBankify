@@ -81,10 +81,9 @@ public class UserService {
     }
 
     public UserDto update(Long id, UserRequest userRequest) {
-        try {
             Optional<User> userOptional = userRepository.findById(id);
             if (userOptional.isEmpty()) {
-                throw new RuntimeException("User not found");
+                throw new UserNotFoundException("User not found");
             }
             User user = userOptional.get();
             user.setName(userRequest.getName());
@@ -98,9 +97,5 @@ public class UserService {
             }
             User savedUser = userRepository.save(user);
             return userMapper.toDto(savedUser);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error updating user: " + e.getMessage());
-        }
     }
 }

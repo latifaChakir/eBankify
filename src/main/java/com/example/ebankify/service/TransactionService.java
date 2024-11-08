@@ -108,4 +108,31 @@ public class TransactionService {
         List<Transaction> transactions = transactionRepository.findAll();
         return transactionMapper.toDtoList(transactions);
     }
+
+    public boolean cancelTransaction(Long transactionId) {
+        Optional<Transaction> transactionOptional = transactionRepository.findById(transactionId);
+        if (!transactionOptional.isPresent()) {
+            throw new TransactionNotFoundException("Transaction introuvable");
+        }
+        Transaction transaction = transactionOptional.get();
+        if (transaction.getStatus() == TransactionStatus.COMPLETED) {
+            throw new IllegalStateException("Impossible de annuler une transaction déjà complétée");
+        }
+        transaction.setStatus(TransactionStatus.REJECTED);
+        transactionRepository.save(transaction);
+        return true;
+    }
+    public boolean acceptTransaction(Long transactionId){
+        Optional<Transaction> transactionOptional = transactionRepository.findById(transactionId);
+        if (!transactionOptional.isPresent()) {
+            throw new TransactionNotFoundException("Transaction introuvable");
+        }
+        Transaction transaction = transactionOptional.get();
+        if (transaction.getStatus()!= TransactionStatus.PENDING) {
+            throw new IllegalStateException("Impossible de accepter une transaction déjà validée");
+        }
+        transaction.setStatus(TransactionStatus.COMPLETED);
+        transactionRepository.save(transaction);
+        return true;
+    }
 }

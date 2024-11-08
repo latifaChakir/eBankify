@@ -67,4 +67,22 @@ public class TransactionController {
                 .build();
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/approve/{id}")
+    public ResponseEntity<TransactionResponse> approveTransaction(@PathVariable Long id) {
+        transactionService.acceptTransaction(id);
+        TransactionResponse response = TransactionResponse.builder()
+                .message("transaction approved successfuly")
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/reject/{id}")
+    public ResponseEntity<TransactionResponse> rejectTransaction(@PathVariable Long id) {
+        transactionService.cancelTransaction(id);
+        TransactionResponse response = TransactionResponse.builder()
+                .message("transaction rejected successfuly")
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok(response);
+    }
 }
