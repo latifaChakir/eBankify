@@ -67,7 +67,7 @@ public class UserService {
     public UserDto findById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
         return userMapper.toDto(userOptional.get());
     }
