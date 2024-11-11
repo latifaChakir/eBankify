@@ -1,6 +1,6 @@
-package com.example.ebankify.domain.responses;
+package com.example.ebankify.domain.vm;
 
-import com.example.ebankify.domain.dtos.InvoiceDTO;
+import com.example.ebankify.domain.dtos.TransactionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +12,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvoiceResponse {
-    private InvoiceDTO invoiceDTO;
+public class TransactionVM {
+    private TransactionDTO transactionDTO;
     private String message;
     private int statusCode;
-    private List<InvoiceDTO> invoices;
+    private List<TransactionDTO> transactions;
 }

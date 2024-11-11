@@ -1,6 +1,6 @@
-package com.example.ebankify.domain.responses;
+package com.example.ebankify.domain.vm;
 
-import com.example.ebankify.domain.dtos.LoanDTO;
+import com.example.ebankify.domain.dtos.AccountDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +12,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanResponse {
-    private LoanDTO loan;
+public class AccountVM {
+    private AccountDTO account;
     private String message;
     private int statusCode;
-    private List<LoanDTO> loans;
+    private List<AccountDTO> accounts;
 }

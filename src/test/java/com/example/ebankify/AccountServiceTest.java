@@ -1,6 +1,5 @@
 package com.example.ebankify;
 
-import com.example.ebankify.domain.responses.AccountResponse;
 import com.example.ebankify.mapper.AccountMapper;
 import com.example.ebankify.repository.AccountRepository;
 import com.example.ebankify.service.AccountService;

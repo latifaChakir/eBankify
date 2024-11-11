@@ -2,7 +2,7 @@ package com.example.ebankify.controller;
 
 import com.example.ebankify.domain.dtos.UserDto;
 import com.example.ebankify.domain.requests.UserRequest;
-import com.example.ebankify.domain.responses.UserResponse;
+import com.example.ebankify.domain.vm.UserVM;
 import com.example.ebankify.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,9 +18,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/save")
-    public ResponseEntity<UserResponse> saveUser(@Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserVM> saveUser(@Valid @RequestBody UserRequest userRequest) {
         UserDto userDto=userService.save(userRequest);
-        UserResponse response = UserResponse.builder()
+        UserVM response = UserVM.builder()
                 .user(userDto)
                 .message("user saved successfuly")
                 .statusCode(HttpStatus.OK.value())
@@ -29,9 +29,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById (@PathVariable Long id) {
+    public ResponseEntity<UserVM> getUserById (@PathVariable Long id) {
         UserDto userDto = userService.findById(id);
-        UserResponse response = UserResponse.builder()
+        UserVM response = UserVM.builder()
                 .user(userDto)
                 .message("user found successfuly")
                 .statusCode(HttpStatus.OK.value())
@@ -39,9 +39,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserVM> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest) {
         UserDto userDto = userService.update(id, userRequest);
-        UserResponse response = UserResponse.builder()
+        UserVM response = UserVM.builder()
                 .user(userDto)
                 .message("user updated successfully")
                 .statusCode(HttpStatus.OK.value())
@@ -49,9 +49,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<UserResponse> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<UserVM> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
-        UserResponse response = UserResponse.builder()
+        UserVM response = UserVM.builder()
                 .message("user deleted successfuly")
                 .statusCode(HttpStatus.OK.value())
                 .build();
