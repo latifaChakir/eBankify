@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
 @Service
 public class SessionAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> PUBLIC_ENDPOINTS = Arrays.asList(
@@ -36,22 +37,24 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Vérifiez la session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("name") == null) {
-            System.out.println("No active session found");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: No active session");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Unauthorized: No active session\"}");
+            response.getWriter().flush();
             return;
         }
 
         Role role = (Role) session.getAttribute("role");
         if (role == null || !RolePermissions.hasPermission(role.name(), servletPath)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: Insufficient permissions");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Forbidden: Insufficient permissions\"}");
+            response.getWriter().flush();
             return;
         }
 
         filterChain.doFilter(request, response);
     }
-
-
 }
