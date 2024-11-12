@@ -37,13 +37,18 @@ public class TransactionService {
         if (sourceAccount.getBalance() < transactionRequest.getAmount()) {
             throw new InsufficientFundsException("Fonds insuffisants sur le compte source");
         }
+
         double limiteVirement = 10000;
         if (transactionRequest.getAmount() > limiteVirement) {
             throw new LimitExceededException("Le montant dépasse la limite de virement autorisée de " + limiteVirement + " DH");
         }
 
-        double transactionFee = calculateTransactionFee(transactionRequest.getType(), transactionRequest.getAmount());
+        // Check if the transaction is cross-bank
+        boolean isCrossBank = !sourceAccount.getBank().equals(destinationAccount.getBank());
+
+        double transactionFee = calculateTransactionFee(transactionRequest.getType(), transactionRequest.getAmount(), isCrossBank);
         double totalAmount = transactionRequest.getAmount() + transactionFee;
+
         Transaction transaction = Transaction.builder()
                 .type(transactionRequest.getType())
                 .amount(transactionRequest.getAmount())
@@ -51,19 +56,25 @@ public class TransactionService {
                 .sourceAccount(sourceAccount)
                 .destinationAccount(destinationAccount)
                 .build();
+
+        // Deduct total amount (including fees) from source account
         sourceAccount.setBalance(sourceAccount.getBalance() - totalAmount);
         destinationAccount.setBalance(destinationAccount.getBalance() + transactionRequest.getAmount());
 
         transactionRepository.save(transaction);
         accountRepository.save(sourceAccount);
         accountRepository.save(destinationAccount);
+
         return transactionMapper.toDTO(transaction);
     }
 
-    private double calculateTransactionFee(TransactionType type, double amount) {
-        double feeRate = (type == TransactionType.STANDARD) ? 0.01 : 0.02;
-        return amount * feeRate;
+    private double calculateTransactionFee(TransactionType type, double amount, boolean isCrossBank) {
+        double baseFeeRate = (type == TransactionType.STANDARD) ? 0.01 : 0.02;
+        double crossBankAdditionalFee = isCrossBank ? 0.005 : 0.0;
+        double totalFeeRate = baseFeeRate + crossBankAdditionalFee;
+        return amount * totalFeeRate;
     }
+
     public TransactionDTO getTransactionById(Long transactionId) {
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction introuvable"));
@@ -86,8 +97,14 @@ public class TransactionService {
             Account destinationAccount = accountRepository.findById(transactionRequest.getDestinationAccountId())
                     .orElseThrow(() -> new AccountNotFoundException("Compte destination introuvable"));
 
-            double transactionFee = calculateTransactionFee(transaction.getType(), transactionRequest.getAmount());
+            boolean isCrossBank = !sourceAccount.getBank().equals(destinationAccount.getBank());
+
+            double transactionFee = calculateTransactionFee(transaction.getType(), transactionRequest.getAmount(),isCrossBank);
             double totalAmount = transactionRequest.getAmount() + transactionFee;
+            double limiteVirement = 10000;
+            if (transactionRequest.getAmount() > limiteVirement) {
+                throw new LimitExceededException("Le montant dépasse la limite de virement autorisée de " + limiteVirement + " DH");
+            }
 
             if (sourceAccount.getBalance() < totalAmount) {
                 throw new InsufficientFundsException("Fonds insuffisants sur le compte source pour la mise à jour");
@@ -150,5 +167,11 @@ public class TransactionService {
                 .map(transactionMapper::toDTO)
                 .toList();
     }
+
+    public List<TransactionDTO> searchTransactionsByAmount(double amount) {
+        List<Transaction> transactions = transactionRepository.findByAmount(amount);
+        return transactionMapper.toDtoList(transactions);
+    }
+
 
 }

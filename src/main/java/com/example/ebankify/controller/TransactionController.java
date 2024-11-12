@@ -1,6 +1,7 @@
 package com.example.ebankify.controller;
 
 import com.example.ebankify.domain.dtos.TransactionDTO;
+import com.example.ebankify.domain.entities.Transaction;
 import com.example.ebankify.domain.requests.TransactionRequest;
 import com.example.ebankify.domain.vm.TransactionVM;
 import com.example.ebankify.service.TransactionService;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -95,5 +97,18 @@ public class TransactionController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/search/{amount}")
+    public ResponseEntity<TransactionVM> searchByAmount(@PathVariable double amount) {
+        List<TransactionDTO> transactions = transactionService.searchTransactionsByAmount(amount);
+        TransactionVM response = TransactionVM.builder()
+                .transactions(transactions)
+                .message("Transactions found successfully for amount: " + amount)
+                .statusCode(HttpStatus.OK.value())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }

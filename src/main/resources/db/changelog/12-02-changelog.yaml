@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1731421549182-1
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            tableName: banks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_banks
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: code
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 1731421549182-2
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            tableName: accounts
+            columns:
+              - column:
+                  name: bank_id
+                  type: BIGINT
+                  constraints:
+                    value: 1
+
+  - changeSet:
+      id: 1731421549182-3
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: accounts
+            baseColumnNames: bank_id
+            constraintName: FK_ACCOUNTS_ON_BANK
+            referencedTableName: banks
+            referencedColumnNames: id
+            onDelete: SET NULL
+            onUpdate: CASCADE

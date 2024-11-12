@@ -57,7 +57,7 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/block/{userId")
+    @GetMapping("/block/{userId}")
     public ResponseEntity<UserVM> blockUser(@PathVariable Long userId) {
         userService.blockUser(userId);
         UserVM response = UserVM.builder()
@@ -67,7 +67,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/unblock/{userId")
+    @GetMapping("/unblock/{userId}")
     public ResponseEntity<UserVM> unblockUser(@PathVariable Long userId) {
         userService.unblockUser(userId);
         UserVM response = UserVM.builder()

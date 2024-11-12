@@ -33,5 +33,7 @@ public class Account {
 
     @OneToMany(mappedBy = "destinationAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Transaction> destinationTransactions;
-
+    @ManyToOne
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
 }

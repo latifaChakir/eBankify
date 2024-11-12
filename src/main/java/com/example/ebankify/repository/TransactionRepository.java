@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findBySourceAccountOrDestinationAccount(Account sourceAccount, Account destinationAccount);
-
+    List<Transaction> findByAmount(double amount);
+    List<Transaction> findByType(String type);
 }

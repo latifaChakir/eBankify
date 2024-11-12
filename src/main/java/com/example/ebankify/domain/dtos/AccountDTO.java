@@ -16,4 +16,5 @@ public class AccountDTO {
     private String accountNumber;
     private AccountStatus status;
     private UserDto user;
+    private BankDto bank;
 }

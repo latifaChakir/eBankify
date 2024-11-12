@@ -14,6 +14,5 @@ public interface InvoiceMapper {
     InvoiceDTO toDto(Invoice invoice);
     Invoice toEntity(InvoiceDTO invoiceDto);
     Invoice toEntity(InvoiceRequest invoiceRequest);
-
     List<InvoiceDTO> toDtoList(List<Invoice> invoices);
 }

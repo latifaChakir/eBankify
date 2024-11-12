@@ -18,6 +18,7 @@ public class RolePermissions {
         adminPermissions.add("/api/transactions");
         adminPermissions.add("/api/transactions/save");
         adminPermissions.add("/api/transactions/history/{id}");
+        adminPermissions.add("/api/transactions/search/{amount}");
         permissionsMap.put("ADMIN", adminPermissions);
 
         // Permissions pour le rôle EMPLOYEE
@@ -37,7 +38,7 @@ public class RolePermissions {
 
         if (permissionsMap.containsKey(role)) {
             return permissionsMap.get(role).stream().anyMatch(pattern ->
-                    servletPath.matches(pattern.replace("{id}", "\\d+").replace("*", ".*"))
+                    servletPath.matches(pattern.replace("{id}", "\\d+").replace("*", ".*").replace("{amount}", "\\d+"))
             );
         }
 
