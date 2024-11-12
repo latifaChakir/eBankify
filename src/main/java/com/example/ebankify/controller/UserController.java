@@ -57,4 +57,23 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/block/{userId")
+    public ResponseEntity<UserVM> blockUser(@PathVariable Long userId) {
+        userService.blockUser(userId);
+        UserVM response = UserVM.builder()
+                .message("user blocked successfuly")
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/unblock/{userId")
+    public ResponseEntity<UserVM> unblockUser(@PathVariable Long userId) {
+        userService.unblockUser(userId);
+        UserVM response = UserVM.builder()
+                .message("user unblocked successfuly")
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok(response);
+    }
 }

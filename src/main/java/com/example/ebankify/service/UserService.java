@@ -107,4 +107,24 @@ public class UserService {
             User savedUser = userRepository.save(user);
             return userMapper.toDto(savedUser);
     }
+
+    public void blockUser(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found");
+        }
+        User user = userOptional.get();
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
+    public void unblockUser(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found");
+        }
+        User user = userOptional.get();
+        user.setActive(true);
+        userRepository.save(user);
+    }
 }
