@@ -17,6 +17,7 @@ public class RolePermissions {
         adminPermissions.add("/api/accounts/save");
         adminPermissions.add("/api/transactions");
         adminPermissions.add("/api/transactions/save");
+        adminPermissions.add("/api/transactions/history/{id}");
         permissionsMap.put("ADMIN", adminPermissions);
 
         // Permissions pour le rôle EMPLOYEE
