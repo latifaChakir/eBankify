@@ -6,6 +6,7 @@ import com.example.ebankify.domain.enums.Role;
 import com.example.ebankify.domain.requests.LoginRequest;
 import com.example.ebankify.domain.requests.RegisterRequest;
 import com.example.ebankify.domain.requests.UserRequest;
+import com.example.ebankify.exception.EmailAlreadyInUseException;
 import com.example.ebankify.exception.UserNotFoundException;
 import com.example.ebankify.mapper.UserMapper;
 import com.example.ebankify.repository.UserRepository;
@@ -33,6 +34,7 @@ public class UserService {
                 .name(registerRequest.getName())
                 .age(registerRequest.getAge())
                 .email(registerRequest.getEmail())
+                .active(registerRequest.isActive())
                 .password(BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt()))
                 .monthlyIncome(registerRequest.getMonthlyIncome())
                 .creditScore(registerRequest.getCreditScore())
@@ -59,8 +61,14 @@ public class UserService {
     }
 
     public UserDto save(UserRequest userRequest) {
+        if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
+            throw new EmailAlreadyInUseException("Email already in use");
+        }
+        userRequest.setPassword(BCrypt.hashpw(userRequest.getPassword(), BCrypt.gensalt()));
+        userRequest.setActive(true);
         User user = userMapper.toEntity(userRequest);
         User savedUser = userRepository.save(user);
+
         return userMapper.toDto(savedUser);
     }
 
@@ -89,6 +97,7 @@ public class UserService {
             user.setName(userRequest.getName());
             user.setAge(userRequest.getAge());
             user.setEmail(userRequest.getEmail());
+            user.setActive(userRequest.isActive());
             user.setMonthlyIncome(userRequest.getMonthlyIncome());
             user.setCreditScore(userRequest.getCreditScore());
             user.setRole(Role.valueOf(String.valueOf(userRequest.getRole()).toUpperCase()));

@@ -27,6 +27,8 @@ public class User {
     private int creditScore;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Column(nullable = false)
+    private boolean active;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Account> accounts;
 

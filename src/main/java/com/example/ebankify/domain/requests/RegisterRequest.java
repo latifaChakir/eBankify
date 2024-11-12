@@ -31,6 +31,9 @@ public class RegisterRequest {
     private int creditScore;
     @NotNull(message = "Le rôle ne peut pas être nul")
     private Role role;
+    @NotNull(message = "Le statut d'activation ne peut pas être nul")
+    private boolean active;
+
 
 
 }

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
@@ -48,6 +49,46 @@ public class UserServiceTest {
         assertThrows(RuntimeException.class, () -> userService.register(registerRequest));
         verify(userRepository).findByEmail(registerRequest.getEmail());
     }
+    @Test
+    void register_ShouldReturnUserDto_WhenRegistrationIsSuccessful() {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setName("John Doe");
+        registerRequest.setAge(30);
+        registerRequest.setEmail("newuser@example.com");
+        registerRequest.setPassword("password123");
+        registerRequest.setMonthlyIncome(5000.0);
+        registerRequest.setCreditScore(700);
+        registerRequest.setRole(Role.USER);
+        when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.empty());
+        String hashedPassword = BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt());
+        User savedUser = User.builder()
+                .name(registerRequest.getName())
+                .age(registerRequest.getAge())
+                .email(registerRequest.getEmail())
+                .password(hashedPassword)
+                .monthlyIncome(registerRequest.getMonthlyIncome())
+                .creditScore(registerRequest.getCreditScore())
+                .role(Role.USER)
+                .build();
+
+        when(userRepository.save(Mockito.any(User.class))).thenReturn(savedUser);
+        when(userMapper.toDto(savedUser)).thenReturn(UserDto.builder()
+                .id(savedUser.getId())
+                .name(savedUser.getName())
+                .age(savedUser.getAge())
+                .email(savedUser.getEmail())
+                .monthlyIncome(savedUser.getMonthlyIncome())
+                .creditScore(savedUser.getCreditScore())
+                .role(savedUser.getRole())
+                .build());
+        UserDto userDto = userService.register(registerRequest);
+        verify(userRepository).save(Mockito.any(User.class));
+        assertNotNull(userDto);
+        assertEquals(registerRequest.getEmail(), userDto.getEmail());
+        assertEquals(registerRequest.getName(), userDto.getName());
+        assertTrue(BCrypt.checkpw(registerRequest.getPassword(), savedUser.getPassword()));
+    }
+
 
     @Test
     void login_ShouldThrowException_WhenUserNotFound() {
@@ -143,33 +184,65 @@ public class UserServiceTest {
         verify(userRepository).deleteById(userId);
     }
 
-//    @Test
-//    void update_ShouldThrowUserNotFoundException_WhenUserNotFound() {
-//        Long userId = 1L;
-//        UserRequest userRequest = new UserRequest();
-//
-//        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-//
-//        assertThrows(UserNotFoundException.class, () -> userService.update(userId, userRequest));
-//        verify(userRepository).findById(userId);
-//    }
-//
-//    @Test
-//    void update_ShouldReturnUpdatedUserDto_WhenUserIsFound() {
-//        Long userId = 1L;
-//        UserRequest userRequest = new UserRequest();
-//        userRequest.setName("Updated Name");
-//        User user = new User();
-//        User updatedUser = new User();
-//
-//        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-//        when(userRepository.save(user)).thenReturn(updatedUser);
-//        when(userMapper.toDto(updatedUser)).thenReturn(new UserDto());
-//
-//        UserDto result = userService.update(userId, userRequest);
-//
-//        assertNotNull(result);
-//        verify(userRepository).save(user);
-//        verify(userMapper).toDto(updatedUser);
-//    }
+    @Test
+    void update_ShouldThrowUserNotFoundException_WhenUserNotFound() {
+        Long userId = 1L;
+        UserRequest userRequest = new UserRequest();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.update(userId, userRequest));
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
+    void update_ShouldReturnUpdatedUserDto_WhenUserIsFound() {
+        Long userId = 1L;
+        UserRequest userRequest = new UserRequest();
+        userRequest.setRole(Role.USER); 
+        userRequest.setName("Updated Name");
+        User user = new User();
+        User updatedUser = new User();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(updatedUser);
+        when(userMapper.toDto(updatedUser)).thenReturn(new UserDto());
+
+        UserDto result = userService.update(userId, userRequest);
+
+        assertNotNull(result);
+        verify(userRepository).save(user);
+        verify(userMapper).toDto(updatedUser);
+    }
+    @Test
+    void update_ShouldReturnUpdatedUserDto_WhenUpdateIsSuccessful() {
+        Long userId = 1L;
+        UserRequest userRequest = new UserRequest();
+        userRequest.setRole(Role.USER);
+
+        User existingUser = new User();
+        existingUser.setId(userId);
+        existingUser.setRole(Role.USER);
+
+        User updatedUser = new User();
+        updatedUser.setId(userId);
+        updatedUser.setRole(Role.USER);
+
+        UserDto updatedUserDto = new UserDto();
+        updatedUserDto.setRole(Role.USER);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userMapper.toEntity(userRequest)).thenReturn(updatedUser);
+        when(userRepository.save(updatedUser)).thenReturn(updatedUser);
+        when(userMapper.toDto(updatedUser)).thenReturn(updatedUserDto);
+
+        UserDto result = userService.update(userId, userRequest);
+
+        assertNotNull(result);
+        assertEquals(Role.USER, result.getRole()); // Vérifiez le rôle ici
+        verify(userRepository).findById(userId);
+        verify(userRepository).save(updatedUser);
+        verify(userMapper).toDto(updatedUser);
+    }
+
 }

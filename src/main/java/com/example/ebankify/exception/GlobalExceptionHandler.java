@@ -29,6 +29,10 @@ public class GlobalExceptionHandler extends RuntimeException {
     public ResponseEntity<Object> handleLimitExceededException(LimitExceededException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(EmailAlreadyInUseException .class)
+    public ResponseEntity<Object> handleEmailAlreadyInUseException(EmailAlreadyInUseException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneralException(Exception ex) {

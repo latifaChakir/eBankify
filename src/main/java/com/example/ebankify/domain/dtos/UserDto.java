@@ -14,8 +14,11 @@ public class UserDto {
     private Long id;
     private String name;
     private int age;
+    private String password;
     private String email;
     private double monthlyIncome;
     private int creditScore;
     private Role role;
+    private boolean active;
+
 }
