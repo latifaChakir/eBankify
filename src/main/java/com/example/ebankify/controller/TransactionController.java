@@ -85,4 +85,15 @@ public class TransactionController {
                 .build();
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/history/{accountId}")
+    public ResponseEntity<TransactionVM> getTransactionHistory(@PathVariable Long accountId) {
+        List<TransactionDTO> transactionDTOs = transactionService.getTransactionHistoryByAccountId(accountId);
+        TransactionVM response = TransactionVM.builder()
+                .transactions(transactionDTOs)
+                .message("Transaction history retrieved successfully")
+                .statusCode(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
 }

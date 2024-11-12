@@ -8,6 +8,7 @@ import com.example.ebankify.domain.enums.TransactionType;
 import com.example.ebankify.domain.requests.TransactionRequest;
 import com.example.ebankify.exception.AccountNotFoundException;
 import com.example.ebankify.exception.InsufficientFundsException;
+import com.example.ebankify.exception.LimitExceededException;
 import com.example.ebankify.exception.TransactionNotFoundException;
 import com.example.ebankify.mapper.AccountMapper;
 import com.example.ebankify.mapper.TransactionMapper;
@@ -35,6 +36,10 @@ public class TransactionService {
 
         if (sourceAccount.getBalance() < transactionRequest.getAmount()) {
             throw new InsufficientFundsException("Fonds insuffisants sur le compte source");
+        }
+        double limiteVirement = 10000;
+        if (transactionRequest.getAmount() > limiteVirement) {
+            throw new LimitExceededException("Le montant dépasse la limite de virement autorisée de " + limiteVirement + " DH");
         }
 
         double transactionFee = calculateTransactionFee(transactionRequest.getType(), transactionRequest.getAmount());
@@ -135,4 +140,15 @@ public class TransactionService {
         transactionRepository.save(transaction);
         return true;
     }
+
+    public List<TransactionDTO> getTransactionHistoryByAccountId(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException("Compte introuvable"));
+        List<Transaction> transactions = transactionRepository.findBySourceAccountOrDestinationAccount(account, account);
+
+        return transactions.stream()
+                .map(transactionMapper::toDTO)
+                .toList();
+    }
+
 }

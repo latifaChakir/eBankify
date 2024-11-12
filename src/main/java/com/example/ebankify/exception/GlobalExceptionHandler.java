@@ -25,6 +25,10 @@ public class GlobalExceptionHandler extends RuntimeException {
     public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(LimitExceededException .class)
+    public ResponseEntity<Object> handleLimitExceededException(LimitExceededException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneralException(Exception ex) {
