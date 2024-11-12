@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1731405616911-1
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  defaultValue: true
+
