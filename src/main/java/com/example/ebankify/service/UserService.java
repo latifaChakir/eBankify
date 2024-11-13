@@ -27,7 +27,7 @@ public class UserService {
 
     public UserDto register(RegisterRequest registerRequest) {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already in use");
+            throw new EmailAlreadyInUseException("Email already in use");
         }
 
         User user = User.builder()
