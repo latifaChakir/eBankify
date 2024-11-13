@@ -22,6 +22,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -125,14 +127,12 @@ public class TransactionServiceTest {
         when(accountRepository.findById(1L)).thenReturn(Optional.of(sourceAccount));
         when(accountRepository.findById(2L)).thenReturn(Optional.of(destinationAccount));
 
-        // Execute & Assert
         assertThrows(InsufficientFundsException.class, () ->
                 transactionService.saveTransaction(transactionRequest)
         );
     }
     @Test
     void testSaveTransaction_ShouldThrowLimitExceededException() {
-        // Setup
         Bank bank1 = new Bank();
         bank1.setId(1L);
 
@@ -209,6 +209,61 @@ public class TransactionServiceTest {
         assertEquals(492.5, sourceAccount.getBalance());
         assertEquals(700, destinationAccount.getBalance());
     }
+    @Test
+    void testDeleteTransaction(){
+        Transaction transaction = new Transaction();
+        transaction.setId(1L);
 
+        when(transactionRepository.findById(1L)).thenReturn(Optional.of(transaction));
+        transactionService.deleteTransaction(1L);
+        verify(transactionRepository).deleteById(1L);
+    }
+    @Test
+    void testGetAllTransaction() {
+        List<Transaction> transactions = Arrays.asList(new Transaction(), new Transaction());
+        List<TransactionDTO> transactionDTOS = Arrays.asList(new TransactionDTO(), new TransactionDTO());
 
+        when(transactionRepository.findAll()).thenReturn(transactions);
+
+        when(transactionMapper.toDtoList(transactions)).thenReturn(transactionDTOS);
+
+        List<TransactionDTO> result = transactionService.getAllTransactions();
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testGetTransactionById() {
+        Account sourceAccount = new Account();
+        sourceAccount.setId(1L);
+
+        Account destinationAccount = new Account();
+        destinationAccount.setId(2L);
+        Transaction transaction = new Transaction();
+        transaction.setId(1L);
+        transaction.setSourceAccount(sourceAccount);
+        transaction.setDestinationAccount(destinationAccount);
+        AccountDTO sourceAccountDTO = new AccountDTO();
+        sourceAccountDTO.setId(1L);
+
+        AccountDTO destinationAccountDTO = new AccountDTO();
+        destinationAccountDTO.setId(2L);
+
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setSourceAccount(sourceAccountDTO);
+        transactionDTO.setDestinationAccount(destinationAccountDTO);
+
+        when(transactionRepository.findById(1L)).thenReturn(Optional.of(transaction));
+        when(transactionMapper.toDTO(transaction)).thenReturn(transactionDTO);
+        when(accountMapper.toDto(sourceAccount)).thenReturn(sourceAccountDTO);
+        when(accountMapper.toDto(destinationAccount)).thenReturn(destinationAccountDTO);
+
+        TransactionDTO result = transactionService.getTransactionById(1L);
+
+        assertNotNull(result);
+        assertNotNull(result.getSourceAccount());
+        assertNotNull(result.getDestinationAccount());
+        assertEquals(1L, result.getSourceAccount().getId());
+        assertEquals(2L, result.getDestinationAccount().getId());
+    }
 }
