@@ -4,6 +4,7 @@ import com.example.ebankify.domain.dtos.InvoiceDTO;
 import com.example.ebankify.domain.entities.Invoice;
 import com.example.ebankify.domain.entities.User;
 import com.example.ebankify.domain.requests.InvoiceRequest;
+import com.example.ebankify.exception.UserNotFoundException;
 import com.example.ebankify.mapper.InvoiceMapper;
 import com.example.ebankify.mapper.UserMapper;
 import com.example.ebankify.repository.InvoiceRepository;
@@ -24,7 +25,7 @@ public class InvoiceService {
     public InvoiceDTO saveInvoice(InvoiceRequest invoiceRequest) {
         Invoice invoice = invoiceMapper.toEntity(invoiceRequest);
         User user = userRepository.findById(invoiceRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         invoice.setUser(user);
         Invoice savedInvoice=invoiceRepository.save(invoice);

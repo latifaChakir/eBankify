@@ -53,29 +53,24 @@ public class AccountService {
         accountDTO.setBank(bankMapper.toDto(account.get().getBank()));
         return accountDTO;
     }
-    public AccountDTO updateAccount(Long accountId, AccountRequest accountRequest) {
-        Optional<Account> accountOptional = accountRepository.findById(accountId);
-        if (accountOptional.isEmpty()) {
-            throw new RuntimeException("Account not found");
-        }
+    public AccountDTO updateAccount(Long accountId, AccountRequest updateRequest) {
+        Account existingAccount = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        Account account = accountOptional.get();
-        account.setBalance(accountRequest.getBalance());
-        account.setAccountNumber(accountRequest.getAccountNumber());
-        account.setStatus(accountRequest.getStatus());
-
-        User user = userRepository.findById(accountRequest.getUserId())
+        User newUser = userRepository.findById(updateRequest.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        account.setUser(user);
+        Bank newBank = bankRepository.findById(updateRequest.getBankId())
+                .orElseThrow(() -> new RuntimeException("Bank not found"));
 
-        Account savedAccount = accountRepository.save(account);
+        existingAccount.setAccountNumber(updateRequest.getAccountNumber());
+        existingAccount.setBalance(updateRequest.getBalance());
+        existingAccount.setStatus(updateRequest.getStatus());
+        existingAccount.setUser(newUser);
+        existingAccount.setBank(newBank);
 
-        AccountDTO accountDTO = accountMapper.toDto(savedAccount);
-        accountDTO.setUser(userMapper.toDto(user)); // Conversion explicite de User vers UserDto
-
-        return accountDTO;
-    }
-    public void deleteAccount(Long accountId) {
+        Account savedAccount = accountRepository.save(existingAccount);
+        return accountMapper.toDto(savedAccount);
+    }    public void deleteAccount(Long accountId) {
         accountRepository.deleteById(accountId);
     }
     public List<AccountDTO> findAll(){
