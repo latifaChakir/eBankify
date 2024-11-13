@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1731513929678-1
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            tableName: transactions
+            columns:
+              - column:
+                  name: next_execution_date
+                  type: DATE
+                  constraints:
+                    nullable: true

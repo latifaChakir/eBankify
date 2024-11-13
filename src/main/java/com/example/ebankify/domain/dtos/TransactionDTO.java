@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +21,6 @@ public class TransactionDTO {
     private TransactionStatus status;
     private AccountDTO sourceAccount;
     private AccountDTO destinationAccount;
+    private LocalDate nextExecutionDate;
+
 }

@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Entity
 @Table(name = "transactions")
@@ -30,5 +32,7 @@ public class Transaction {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "destination_account_id")
     private Account destinationAccount;
+    @Column(name = "next_execution_date")
+    private LocalDate nextExecutionDate;
 
 }
