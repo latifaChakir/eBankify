@@ -1,7 +1,10 @@
 package com.example.ebankify.controller;
 
 import com.example.ebankify.domain.dtos.TransactionDTO;
+import com.example.ebankify.domain.elasticsearch.TransactionDocument;
 import com.example.ebankify.domain.entities.Transaction;
+import com.example.ebankify.domain.enums.TransactionStatus;
+import com.example.ebankify.domain.enums.TransactionType;
 import com.example.ebankify.domain.requests.TransactionRequest;
 import com.example.ebankify.domain.vm.TransactionVM;
 import com.example.ebankify.service.TransactionService;
@@ -108,6 +111,15 @@ public class TransactionController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<TransactionDocument>> searchTransactions(
+            @RequestParam(required = false, defaultValue = "0") double amount,
+            @RequestParam(required = false) TransactionType type,
+            @RequestParam(required = false) TransactionStatus status) {
+
+        List<TransactionDocument> transactions = transactionService.searchTransactions(amount, type, status);
+        return ResponseEntity.ok(transactions);
     }
 
 

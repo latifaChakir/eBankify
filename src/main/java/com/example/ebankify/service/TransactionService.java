@@ -1,6 +1,7 @@
 package com.example.ebankify.service;
 
 import com.example.ebankify.domain.dtos.TransactionDTO;
+import com.example.ebankify.domain.elasticsearch.TransactionDocument;
 import com.example.ebankify.domain.entities.Account;
 import com.example.ebankify.domain.entities.Transaction;
 import com.example.ebankify.domain.enums.TransactionStatus;
@@ -13,6 +14,7 @@ import com.example.ebankify.exception.TransactionNotFoundException;
 import com.example.ebankify.mapper.AccountMapper;
 import com.example.ebankify.mapper.TransactionMapper;
 import com.example.ebankify.repository.AccountRepository;
+import com.example.ebankify.repository.TransactionDocumentRepository;
 import com.example.ebankify.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,6 +31,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private AccountMapper accountMapper;
+    private TransactionDocumentRepository transactionDocumentRepository;
 
     public TransactionDTO saveTransaction(TransactionRequest transactionRequest) {
         System.out.println(transactionRequest);
@@ -67,6 +70,17 @@ public class TransactionService {
         destinationAccount.setBalance(destinationAccount.getBalance() + transactionRequest.getAmount());
 
         transactionRepository.save(transaction);
+        TransactionDocument transactionDocument = new TransactionDocument();
+        transactionDocument.setId(transaction.getId().toString());
+        transactionDocument.setType(transaction.getType());
+        transactionDocument.setAmount(transaction.getAmount());
+        transactionDocument.setStatus(transaction.getStatus());
+        transactionDocument.setSourceAccountId(transaction.getSourceAccount().getId());
+        transactionDocument.setDestinationAccountId(transaction.getDestinationAccount().getId());
+        transactionDocument.setNextExecutionDate(transaction.getNextExecutionDate());
+        transactionDocument.setCreatedAt(LocalDate.now());
+
+        transactionDocumentRepository.save(transactionDocument);
         accountRepository.save(sourceAccount);
         accountRepository.save(destinationAccount);
 
@@ -209,5 +223,16 @@ public class TransactionService {
             }
         }
     }
+    public List<TransactionDocument> searchTransactions(double amount, TransactionType type, TransactionStatus status) {
+        if (amount > 0) {
+            return transactionDocumentRepository.findByAmount(amount);
+        } else if (type != null) {
+            return transactionDocumentRepository.findByType(type);
+        } else if (status != null) {
+            return transactionDocumentRepository.findByStatus(status);
+        }
+        return (List<TransactionDocument>) transactionDocumentRepository.findAll();
+    }
+
 
 }
