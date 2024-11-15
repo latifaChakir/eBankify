@@ -1,15 +1,12 @@
 package com.example.ebankify.controller;
 
 import com.example.ebankify.domain.dtos.TransactionDTO;
-import com.example.ebankify.domain.elasticsearch.TransactionDocument;
-import com.example.ebankify.domain.entities.Transaction;
-import com.example.ebankify.domain.enums.TransactionStatus;
-import com.example.ebankify.domain.enums.TransactionType;
 import com.example.ebankify.domain.requests.TransactionRequest;
 import com.example.ebankify.domain.vm.TransactionVM;
 import com.example.ebankify.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +19,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:8080")
 @AllArgsConstructor
 public class TransactionController {
+    @Autowired
     private TransactionService transactionService;
     @PostMapping("/save")
     public ResponseEntity<TransactionVM> saveTransaction(@Valid @RequestBody TransactionRequest transactionRequest) {
@@ -101,26 +99,26 @@ public class TransactionController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/search/{amount}")
-    public ResponseEntity<TransactionVM> searchByAmount(@PathVariable double amount) {
-        List<TransactionDTO> transactions = transactionService.searchTransactionsByAmount(amount);
-        TransactionVM response = TransactionVM.builder()
-                .transactions(transactions)
-                .message("Transactions found successfully for amount: " + amount)
-                .statusCode(HttpStatus.OK.value())
-                .build();
-
-        return ResponseEntity.ok(response);
-    }
-    @GetMapping("/search")
-    public ResponseEntity<List<TransactionDocument>> searchTransactions(
-            @RequestParam(required = false, defaultValue = "0") double amount,
-            @RequestParam(required = false) TransactionType type,
-            @RequestParam(required = false) TransactionStatus status) {
-
-        List<TransactionDocument> transactions = transactionService.searchTransactions(amount, type, status);
-        return ResponseEntity.ok(transactions);
-    }
+//    @GetMapping("/search/{amount}")
+//    public ResponseEntity<TransactionVM> searchByAmount(@PathVariable double amount) {
+//        List<TransactionDTO> transactions = transactionService.searchTransactionsByAmount(amount);
+//        TransactionVM response = TransactionVM.builder()
+//                .transactions(transactions)
+//                .message("Transactions found successfully for amount: " + amount)
+//                .statusCode(HttpStatus.OK.value())
+//                .build();
+//
+//        return ResponseEntity.ok(response);
+//    }
+//    @GetMapping("/search")
+//    public ResponseEntity<List<TransactionDocument>> searchTransactions(
+//            @RequestParam(required = false, defaultValue = "0") double amount,
+//            @RequestParam(required = false) TransactionType type,
+//            @RequestParam(required = false) TransactionStatus status) {
+//
+//        List<TransactionDocument> transactions = transactionService.searchTransactions(amount, type, status);
+//        return ResponseEntity.ok(transactions);
+//    }
 
 
 }

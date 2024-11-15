@@ -14,10 +14,3 @@ spring:
       format-sql: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
-  data:
-    elasticsearch:
-      client:
-        rest:
-          uris: http://localhost:9200
-      repositories:
-        enabled: true

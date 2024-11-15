@@ -11,8 +11,4 @@ import java.util.List;
 public interface LoanRepository extends JpaRepository<Loan, Long> {
     @Query("SELECT l FROM Loan l JOIN FETCH l.user")
     List<Loan> findAllWithUser();
-
-//    @Override
-//    @EntityGraph(attributePaths = {"user"})
-//    List<Loan> findAll();
 }
