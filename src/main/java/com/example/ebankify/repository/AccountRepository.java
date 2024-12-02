@@ -9,4 +9,5 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT a FROM Account a JOIN FETCH a.user")
     List<Account> findAllWithUser();
+
 }
