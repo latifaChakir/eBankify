@@ -1,51 +1,5 @@
 databaseChangeLog:
   - changeSet:
-      id: 1730282964247-5
-      author: Youcode
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  autoIncrement: true
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-                    primaryKeyName: pk_users
-                  name: id
-                  type: BIGINT
-              - column:
-                  name: name
-                  type: VARCHAR(255)
-              - column:
-                  constraints:
-                    nullable: false
-                  name: age
-                  type: INT
-              - column:
-                  name: email
-                  type: VARCHAR(255)
-              - column:
-                  name: password
-                  type: VARCHAR(255)
-              - column:
-                  constraints:
-                    nullable: false
-                  name: monthly_income
-                  type: DOUBLE
-              - column:
-                  constraints:
-                    nullable: false
-                  name: credit_score
-                  type: INT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: role
-                  type: VARCHAR(255)
-            tableName: users
-
-  - changeSet:
       id: 1730282964247-1
       author: Youcode
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
@@ -101,6 +55,8 @@ databaseChangeLog:
                   name: amount_due
                   type: DOUBLE
               - column:
+                  constraints:
+                    nullable: true
                   name: due_date
                   type: DATETIME
               - column:
@@ -184,7 +140,7 @@ databaseChangeLog:
             tableName: transactions
 
   - changeSet:
-      id: 1730282964247-6
+      id: 1730282964247-5
       author: Youcode
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -194,7 +150,7 @@ databaseChangeLog:
             tableName: accounts
 
   - changeSet:
-      id: 1730282964247-7
+      id: 1730282964247-6
       author: Youcode
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -204,14 +160,26 @@ databaseChangeLog:
             tableName: users
 
   - changeSet:
-      id: 1730282964247-8
+      id: 1730282964247-7
       author: Youcode
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: user_id
             baseTableName: accounts
-            constraintName: FK_ACCOUNTS_ON_USER
+            constraintName: fk_accounts_user
+            referencedColumnNames: id
+            referencedTableName: users
+
+  - changeSet:
+      id: 1730282964247-8
+      author: Youcode
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: invoices
+            constraintName: fk_invoices_user
             referencedColumnNames: id
             referencedTableName: users
 
@@ -222,8 +190,8 @@ databaseChangeLog:
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: user_id
-            baseTableName: invoices
-            constraintName: FK_INVOICES_ON_USER
+            baseTableName: loans
+            constraintName: fk_loans_user
             referencedColumnNames: id
             referencedTableName: users
 
@@ -233,20 +201,8 @@ databaseChangeLog:
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
-            baseColumnNames: user_id
-            baseTableName: loans
-            constraintName: FK_LOANS_ON_USER
-            referencedColumnNames: id
-            referencedTableName: users
-
-  - changeSet:
-      id: 1730282964247-11
-      author: Youcode
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - addForeignKeyConstraint:
             baseColumnNames: account_id
             baseTableName: transactions
-            constraintName: FK_TRANSACTIONS_ON_ACCOUNT
+            constraintName: fk_transactions_account
             referencedColumnNames: id
             referencedTableName: accounts

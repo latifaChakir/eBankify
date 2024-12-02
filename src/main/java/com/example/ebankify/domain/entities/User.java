@@ -1,13 +1,14 @@
 package com.example.ebankify.domain.entities;
 
-import com.example.ebankify.domain.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -25,8 +26,14 @@ public class User {
     private String password;
     private double monthlyIncome;
     private int creditScore;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
     @Column(nullable = false)
     private boolean active;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

@@ -10,19 +10,19 @@ import com.example.ebankify.exception.EmailAlreadyInUseException;
 import com.example.ebankify.exception.UserNotFoundException;
 import com.example.ebankify.mapper.UserMapper;
 import com.example.ebankify.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
+    private PasswordEncoder passwordEncoder;
     private UserMapper userMapper;
 
     public UserDto register(RegisterRequest registerRequest) {
@@ -35,10 +35,7 @@ public class UserService {
                 .age(registerRequest.getAge())
                 .email(registerRequest.getEmail())
                 .active(registerRequest.isActive())
-                .password(BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt()))
-                .monthlyIncome(registerRequest.getMonthlyIncome())
-                .creditScore(registerRequest.getCreditScore())
-                .role(Role.valueOf(String.valueOf(registerRequest.getRole()).toUpperCase()))
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -100,7 +97,6 @@ public class UserService {
             user.setActive(userRequest.isActive());
             user.setMonthlyIncome(userRequest.getMonthlyIncome());
             user.setCreditScore(userRequest.getCreditScore());
-            user.setRole(Role.valueOf(String.valueOf(userRequest.getRole()).toUpperCase()));
             if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
                 user.setPassword(BCrypt.hashpw(userRequest.getPassword(), BCrypt.gensalt()));
             }

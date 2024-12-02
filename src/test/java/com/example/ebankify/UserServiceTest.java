@@ -56,8 +56,6 @@ public class UserServiceTest {
         registerRequest.setAge(30);
         registerRequest.setEmail("newuser@example.com");
         registerRequest.setPassword("password123");
-        registerRequest.setMonthlyIncome(5000.0);
-        registerRequest.setCreditScore(700);
         registerRequest.setRole(Role.USER);
         when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.empty());
         String hashedPassword = BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt());
@@ -66,9 +64,6 @@ public class UserServiceTest {
                 .age(registerRequest.getAge())
                 .email(registerRequest.getEmail())
                 .password(hashedPassword)
-                .monthlyIncome(registerRequest.getMonthlyIncome())
-                .creditScore(registerRequest.getCreditScore())
-                .role(Role.USER)
                 .build();
 
         when(userRepository.save(Mockito.any(User.class))).thenReturn(savedUser);
@@ -79,7 +74,6 @@ public class UserServiceTest {
                 .email(savedUser.getEmail())
                 .monthlyIncome(savedUser.getMonthlyIncome())
                 .creditScore(savedUser.getCreditScore())
-                .role(savedUser.getRole())
                 .build());
         UserDto userDto = userService.register(registerRequest);
         verify(userRepository).save(Mockito.any(User.class));
@@ -222,11 +216,9 @@ public class UserServiceTest {
 
         User existingUser = new User();
         existingUser.setId(userId);
-        existingUser.setRole(Role.USER);
 
         User updatedUser = new User();
         updatedUser.setId(userId);
-        updatedUser.setRole(Role.USER);
 
         UserDto updatedUserDto = new UserDto();
         updatedUserDto.setRole(Role.USER);
