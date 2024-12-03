@@ -56,7 +56,6 @@ public class UserServiceTest {
         registerRequest.setAge(30);
         registerRequest.setEmail("newuser@example.com");
         registerRequest.setPassword("password123");
-        registerRequest.setRole(Role.USER);
         when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.empty());
         String hashedPassword = BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt());
         User savedUser = User.builder()

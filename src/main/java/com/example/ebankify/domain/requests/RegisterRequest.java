@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -25,9 +26,7 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
-    @NotNull(message = "Le rôle ne peut pas être nul")
-    private Role role;
     @NotNull(message = "Le statut d'activation ne peut pas être null")
     private boolean active;
-
+    private Set<Long> roles;
 }

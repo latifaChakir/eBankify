@@ -16,6 +16,7 @@ import com.example.ebankify.repository.AccountRepository;
 import com.example.ebankify.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +25,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-@Transactional
+@RequiredArgsConstructor
 public class TransactionService {
     private final TransactionMapper transactionMapper;
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
-    private AccountMapper accountMapper;
+    private final AccountMapper accountMapper;
 
     public TransactionDTO saveTransaction(TransactionRequest transactionRequest) {
         System.out.println(transactionRequest);

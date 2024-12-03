@@ -20,5 +20,6 @@ public class UserDto {
     private int creditScore;
     private Role role;
     private boolean active;
+    private String token;
 
 }

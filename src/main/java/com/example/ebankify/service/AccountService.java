@@ -13,13 +13,14 @@ import com.example.ebankify.repository.AccountRepository;
 import com.example.ebankify.repository.BankRepository;
 import com.example.ebankify.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccountService {
     private  AccountRepository accountRepository;
     private AccountMapper accountMapper;

@@ -1,47 +1,71 @@
 package com.example.ebankify.service;
 
 import com.example.ebankify.domain.dtos.UserDto;
+import com.example.ebankify.domain.entities.Role;
 import com.example.ebankify.domain.entities.User;
-import com.example.ebankify.domain.enums.Role;
 import com.example.ebankify.domain.requests.LoginRequest;
 import com.example.ebankify.domain.requests.RegisterRequest;
 import com.example.ebankify.domain.requests.UserRequest;
 import com.example.ebankify.exception.EmailAlreadyInUseException;
 import com.example.ebankify.exception.UserNotFoundException;
 import com.example.ebankify.mapper.UserMapper;
+import com.example.ebankify.repository.RoleRepository;
 import com.example.ebankify.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import com.example.ebankify.security.JwtService;
+import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final JwtService jwtService;
+    private final RoleRepository roleRepository;
 
     public UserDto register(RegisterRequest registerRequest) {
-        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            throw new EmailAlreadyInUseException("Email already in use");
+        try {
+            System.out.println("Registering user: " + registerRequest);
+            if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+                throw new EmailAlreadyInUseException("Email already in use");
+            }
+
+            User user = User.builder()
+                    .name(registerRequest.getName())
+                    .age(registerRequest.getAge())
+                    .email(registerRequest.getEmail())
+                    .active(registerRequest.isActive())
+                    .password(passwordEncoder.encode(registerRequest.getPassword()))
+                    .roles(new HashSet<>()) // Ensure roles is initialized
+                    .build();
+
+            Set<Role> roles = registerRequest.getRoles().stream()
+                    .distinct()
+                    .map(roleId -> roleRepository.findById(roleId)
+                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
+                    .collect(Collectors.toSet());
+
+            user.getRoles().addAll(roles); // Now this should work without throwing NullPointerException
+
+            User savedUser = userRepository.save(user);
+            String token = jwtService.generateToken(savedUser, savedUser.getId());
+            UserDto userDto = userMapper.toDto(savedUser);
+            userDto.setToken(token);
+
+            return userDto;
+        } catch (Exception e) {
+            System.out.println("Error during registration: " + e.getMessage());
+            throw new RuntimeException("Registration failed", e); // Use custom exception
         }
-
-        User user = User.builder()
-                .name(registerRequest.getName())
-                .age(registerRequest.getAge())
-                .email(registerRequest.getEmail())
-                .active(registerRequest.isActive())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .build();
-
-        User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
     }
-
     public UserDto login(LoginRequest loginRequest) {
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
