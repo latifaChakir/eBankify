@@ -1,5 +1,6 @@
 package com.example.ebankify.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class User implements UserDetails {
     private String name;
     private int age;
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private double monthlyIncome;
     private int creditScore;

@@ -1,5 +1,6 @@
 package com.example.ebankify.service;
 
+import com.example.ebankify.domain.dtos.UserAuthDto;
 import com.example.ebankify.domain.dtos.UserDto;
 import com.example.ebankify.domain.entities.Role;
 import com.example.ebankify.domain.entities.User;
@@ -7,6 +8,7 @@ import com.example.ebankify.domain.requests.LoginRequest;
 import com.example.ebankify.domain.requests.RegisterRequest;
 import com.example.ebankify.domain.requests.UserRequest;
 import com.example.ebankify.exception.EmailAlreadyInUseException;
+import com.example.ebankify.exception.InvalidCredentialsException;
 import com.example.ebankify.exception.UserNotFoundException;
 import com.example.ebankify.mapper.UserMapper;
 import com.example.ebankify.repository.RoleRepository;
@@ -31,7 +33,7 @@ public class UserService {
     private final JwtService jwtService;
     private final RoleRepository roleRepository;
 
-    public UserDto register(RegisterRequest registerRequest) {
+    public UserAuthDto register(RegisterRequest registerRequest) {
         try {
             System.out.println("Registering user: " + registerRequest);
             if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
@@ -44,7 +46,7 @@ public class UserService {
                     .email(registerRequest.getEmail())
                     .active(registerRequest.isActive())
                     .password(passwordEncoder.encode(registerRequest.getPassword()))
-                    .roles(new HashSet<>()) // Ensure roles is initialized
+                    .roles(new HashSet<>())
                     .build();
 
             Set<Role> roles = registerRequest.getRoles().stream()
@@ -53,32 +55,34 @@ public class UserService {
                             .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
                     .collect(Collectors.toSet());
 
-            user.getRoles().addAll(roles); // Now this should work without throwing NullPointerException
+            user.getRoles().addAll(roles);
 
             User savedUser = userRepository.save(user);
             String token = jwtService.generateToken(savedUser, savedUser.getId());
-            UserDto userDto = userMapper.toDto(savedUser);
+            UserAuthDto userDto = userMapper.toUserAuthDto(savedUser);
             userDto.setToken(token);
 
             return userDto;
         } catch (Exception e) {
             System.out.println("Error during registration: " + e.getMessage());
-            throw new RuntimeException("Registration failed", e); // Use custom exception
+            throw new RuntimeException("Registration failed", e);
         }
     }
-    public UserDto login(LoginRequest loginRequest) {
+    public UserAuthDto login(LoginRequest loginRequest)  {
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
 
         User user = userOptional.get();
-        if (!BCrypt.checkpw(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password.");
         }
-
-        return userMapper.toDto(user);
+        String token = jwtService.generateToken(user, user.getId());
+        UserAuthDto userDto = userMapper.toUserAuthDto(user);
+        userDto.setToken(token);
+        return userDto;
     }
 
     public UserDto save(UserRequest userRequest) {

@@ -8,15 +8,16 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "http://localhost:4200")
 @AllArgsConstructor
 public class UserController {
     private UserService userService;
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<UserVM> saveUser(@Valid @RequestBody UserRequest userRequest) {
         UserDto userDto=userService.save(userRequest);
@@ -27,7 +28,7 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserVM> getUserById (@PathVariable Long id) {
         UserDto userDto = userService.findById(id);
@@ -48,6 +49,8 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<UserVM> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
