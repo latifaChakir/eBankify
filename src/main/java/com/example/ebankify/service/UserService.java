@@ -89,11 +89,26 @@ public class UserService {
         if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
             throw new EmailAlreadyInUseException("Email already in use");
         }
-        userRequest.setPassword(BCrypt.hashpw(userRequest.getPassword(), BCrypt.gensalt()));
-        userRequest.setActive(true);
-        User user = userMapper.toEntity(userRequest);
-        User savedUser = userRepository.save(user);
+        if (userRequest.getRoles() == null || userRequest.getRoles().isEmpty()) {
+            throw new RuntimeException("Roles cannot be null or empty");
+        }
 
+        User user = userMapper.toEntity(userRequest);
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        user.setActive(true);
+
+        Set<Role> roles = userRequest.getRoles().stream()
+                .distinct()
+                .map(roleId -> roleRepository.findById(roleId)
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
+                .collect(Collectors.toSet());
+
+        if (user.getRoles() == null) {
+            user.setRoles(new HashSet<>());
+        }
+        user.getRoles().addAll(roles);
+
+        User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }
 
