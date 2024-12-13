@@ -92,16 +92,15 @@ public class UserService {
         if (userRequest.getRoles() == null || userRequest.getRoles().isEmpty()) {
             throw new RuntimeException("Roles cannot be null or empty");
         }
-
-        User user = userMapper.toEntity(userRequest);
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        user.setActive(true);
-
         Set<Role> roles = userRequest.getRoles().stream()
                 .distinct()
                 .map(roleId -> roleRepository.findById(roleId)
                         .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
                 .collect(Collectors.toSet());
+
+        User user = userMapper.toEntity(userRequest);
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        user.setActive(true);
 
         if (user.getRoles() == null) {
             user.setRoles(new HashSet<>());

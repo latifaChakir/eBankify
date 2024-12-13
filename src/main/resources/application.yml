@@ -14,3 +14,19 @@ spring:
       format-sql: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+keycloak:
+  realm: BankApp
+  auth-server-url: http://localhost:8081
+  resource: bank-client
+  public-client: false
+  credentials:
+    secret: "s4bRYEyhPS7aiYa0kodshJfBze5fxfSk"
+  bearer-only: true
+  ssl-required: external
+  admin:
+    username: admin
+    password: admin
+    client-id: bank-app-client
+    realm: BankApp
+  policy-enforcer-config:
+    enforcement-mode: ENFORCING
