@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
     private UserService userService;
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<UserVM> saveUser(@Valid @RequestBody UserRequest userRequest) {
         UserDto userDto=userService.save(userRequest);
@@ -28,7 +28,7 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserVM> getUserById (@PathVariable Long id) {
         UserDto userDto = userService.findById(id);

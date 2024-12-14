@@ -14,14 +14,24 @@ spring:
       format-sql: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/BankApp
+          jwk-set-uri: http://localhost:8081/realms/BankApp/protocol/openid-connect/certs
+
+
+# Configuration de Keycloak pour des informations supplémentaires si nécessaire
 keycloak:
   realm: BankApp
-  auth-server-url: http://localhost:8081
-  resource: bank-client
+  auth-server-url: http://localhost:8081/auth
+  resource: bank-app-client
   public-client: false
   credentials:
     secret: "s4bRYEyhPS7aiYa0kodshJfBze5fxfSk"
-  bearer-only: true
+  bearer-only: false
   ssl-required: external
   admin:
     username: admin

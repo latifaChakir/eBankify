@@ -30,7 +30,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-    private final JwtService jwtService;
     private final RoleRepository roleRepository;
 
     public UserAuthDto register(RegisterRequest registerRequest) {
@@ -45,7 +44,7 @@ public class UserService {
                     .age(registerRequest.getAge())
                     .email(registerRequest.getEmail())
                     .active(registerRequest.isActive())
-                    .password(passwordEncoder.encode(registerRequest.getPassword()))
+//                    .password(passwordEncoder.encode(registerRequest.getPassword()))
                     .roles(new HashSet<>())
                     .build();
 
@@ -58,9 +57,9 @@ public class UserService {
             user.getRoles().addAll(roles);
 
             User savedUser = userRepository.save(user);
-            String token = jwtService.generateToken(savedUser, savedUser.getId());
+//            String token = jwtService.generateToken(savedUser, savedUser.getId());
             UserAuthDto userDto = userMapper.toUserAuthDto(savedUser);
-            userDto.setToken(token);
+//            userDto.setToken(token);
 
             return userDto;
         } catch (Exception e) {
@@ -76,12 +75,12 @@ public class UserService {
         }
 
         User user = userOptional.get();
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid email or password.");
-        }
-        String token = jwtService.generateToken(user, user.getId());
+//        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+//            throw new InvalidCredentialsException("Invalid email or password.");
+//        }
+//        String token = jwtService.generateToken(user, user.getId());
         UserAuthDto userDto = userMapper.toUserAuthDto(user);
-        userDto.setToken(token);
+//        userDto.setToken(token);
         return userDto;
     }
 
@@ -101,11 +100,7 @@ public class UserService {
         User user = userMapper.toEntity(userRequest);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setActive(true);
-
-        if (user.getRoles() == null) {
-            user.setRoles(new HashSet<>());
-        }
-        user.getRoles().addAll(roles);
+        user.setRoles(new HashSet<>(roles));
 
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);

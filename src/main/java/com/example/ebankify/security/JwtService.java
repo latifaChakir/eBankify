@@ -1,6 +1,7 @@
 package com.example.ebankify.security;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,6 @@ import java.util.function.Function;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-@Service
 public class JwtService {
     final long jwtExpiration = 3600000L; // 1 hour expiration
     private String secretKey = "thisIsA256BitLongKeyForJWTs12345678"; // Example 256-bit key
@@ -35,8 +35,9 @@ public class JwtService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .claim("authorities", authorities)
-                .signWith(getSignInKey())
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256) // Ensure HS256 is used here
                 .compact();
+
     }
 
     private Key getSignInKey() {
