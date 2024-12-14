@@ -40,3 +40,10 @@ keycloak:
     realm: BankApp
   policy-enforcer-config:
     enforcement-mode: ENFORCING
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:keystore.jks
+    key-store-password: Latifa-1234@
+    key-store-type: JKS
+    key-alias: tomcat
