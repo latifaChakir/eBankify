@@ -15,7 +15,7 @@ pipeline {
         // Étape 1 : Cloner le code depuis Git
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'git-credentials', url: 'https://github.com/user/eBankify.git'
+                git branch: 'feature/keycloak', credentialsId: 'git-credentials', url: 'https://github.com/latifaChakir/eBankify.git'
             }
         }
 
