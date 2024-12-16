@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // SonarQube variables
         SONARQUBE_URL = 'http://localhost:9000'
         SONAR_SCANNER = 'SonarScanner' // Nom configuré dans Jenkins
         SONAR_TOKEN = credentials('sonar-token') // Identifiant sécurisé Jenkins
