@@ -10,7 +10,7 @@
     <groupId>com.example</groupId>
     <artifactId>eBankify</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>eBankify</name>
     <description>eBankify</description>
     <properties>

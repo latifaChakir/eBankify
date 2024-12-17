@@ -1,17 +1,17 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ebankify
+    url: jdbc:postgresql://postgres:5432/ebankify
     username: postgres
     password: latifa
     driver-class-name: org.postgresql.Driver
-    jpa:
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
+  jpa:
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: true
-      format-sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    format-sql: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
@@ -22,8 +22,6 @@ spring:
           issuer-uri: http://localhost:8081/realms/BankApp
           jwk-set-uri: http://localhost:8081/realms/BankApp/protocol/openid-connect/certs
 
-
-# Configuration de Keycloak pour des informations supplémentaires si nécessaire
 keycloak:
   realm: BankApp
   auth-server-url: http://localhost:8081/auth
@@ -40,6 +38,7 @@ keycloak:
     realm: BankApp
   policy-enforcer-config:
     enforcement-mode: ENFORCING
+
 server:
   port: 8443
   ssl:
