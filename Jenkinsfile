@@ -39,7 +39,7 @@ pipeline {
                     echo "Version de Javac :"
                     javac -version
                     echo %SONAR_TOKEN%
-                    echo "Contenu du répertoire de travail OK :"
+                    echo "Contenu du répertoire de travail :"
                     cd
                     dir
                 '''
