@@ -91,7 +91,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8081:8080')
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080')
                 }
             }
         }
