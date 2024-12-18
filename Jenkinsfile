@@ -80,6 +80,13 @@ pipeline {
             }
         }
 
+        stage('Manual Approval') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    input message: 'Déployer en production ?', ok: 'Procéder'
+                }
+            }
+        }
 
         stage('Deploy') {
             steps {
