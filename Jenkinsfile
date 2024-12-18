@@ -1,74 +1,101 @@
 pipeline {
     agent any
 
-    environment {
-        SONARQUBE_URL = 'http://localhost:9000'
-        SONAR_SCANNER = 'SonarScanner' // Nom configuré dans Jenkins
-        SONAR_TOKEN = credentials('sonar-token') // Identifiant sécurisé Jenkins
+    tools {
+        maven 'Maven' // Assurez-vous que Maven est configuré dans Jenkins
+    }
 
-        // Docker variables
-        DOCKER_IMAGE = 'ebankify:latest'
+    environment {
+        DOCKER_IMAGE = 'banking-system'
+        DOCKER_TAG = "${BUILD_NUMBER}"
+        SONAR_TOKEN = credentials('sonar-token')
     }
 
     stages {
-        // Étape 1 : Cloner le code depuis Git
         stage('Checkout') {
             steps {
-                git branch: 'devops', url: 'https://github.com/latifaChakir/eBankify'
+                script {
+                    deleteDir() // Nettoyer le workspace
+                    echo "Clonage du dépôt Git..."
+                    sh '''
+                        git clone -b devops https://github.com/latifaChakir/eBankify .
+                        echo "Dépôt cloné avec succès."
+                    '''
+                }
             }
         }
 
-        // Étape 2 : Compiler le projet
+        stage('Environment Check') {
+            steps {
+                sh '''
+                    echo "Version de Git :"
+                    git --version
+                    echo "Branche Git actuelle :"
+                    git branch --show-current
+                    echo "Statut de Git :"
+                    git status
+                    echo "Version de Java :"
+                    java -version
+                    echo "Version de Javac :"
+                    javac -version
+                    echo "Contenu du répertoire de travail :"
+                    pwd
+                    ls -la
+                '''
+            }
+        }
+
         stage('Build') {
             steps {
-                sh './mvnw clean package'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
-        // Étape 3 : Lancer les tests unitaires avec Jacoco
-        stage('Test') {
+        stage('Unit Tests') {
             steps {
-                sh './mvnw test'
+                sh 'mvn test'
             }
             post {
-                success {
-                    // Publier les rapports de couverture
-                    jacoco execPattern: '**/target/jacoco.exec'
+                always {
+                    junit '**/target/surefire-reports/*.xml'
                 }
             }
         }
 
-        // Étape 4 : Analyse de la qualité avec SonarQube
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh "./mvnw sonar:sonar -Dsonar.projectKey=eBankify -Dsonar.login=$SONAR_TOKEN"
-                }
-            }
-        }
-
-        // Étape 5 : Conteneuriser avec Docker
-        stage('Docker Build') {
+        stage('Code Quality Analysis') {
             steps {
                 sh '''
-                docker build -t $DOCKER_IMAGE .
+                    mvn sonar:sonar \
+                        -Dsonar.projectKey=Bank \
+                        -Dsonar.projectName=Bank \
+                        -Dsonar.host.url=http://sonarqube:9000 \
+                        -Dsonar.login=${SONAR_TOKEN}
                 '''
             }
         }
 
-        // Étape 6 : Validation Manuelle
-        stage('Manual Validation') {
+        stage('Build Docker Image') {
             steps {
-                input message: "Validez-vous le déploiement de l'application ?", ok: "Déployer"
+                script {
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE}:latest")
+                }
             }
         }
 
-        // Étape 7 : Déploiement de l'image Docker
+        stage('Manual Approval') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    input message: 'Déployer en production ?', ok: 'Procéder'
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
-                sh '''
-                docker run -d -p 8080:8080 $DOCKER_IMAGE
-                '''
+                script {
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8081:8080')
+                }
             }
         }
     }
