@@ -27,7 +27,7 @@ pipeline {
 
         stage('Environment Check') {
             steps {
-                sh '''
+                bat '''
                     echo "Version de Git :"
                     git --version
                     echo "Branche Git actuelle :"
@@ -53,7 +53,7 @@ pipeline {
 
         stage('Unit Tests') {
             steps {
-                sh 'mvn test'
+                bat 'mvn test'
             }
             post {
                 always {
@@ -64,7 +64,7 @@ pipeline {
 
         stage('Code Quality Analysis') {
             steps {
-                sh '''
+                bat '''
                     mvn sonar:sonar \
                         -Dsonar.projectKey=Bank \
                         -Dsonar.projectName=Bank \
