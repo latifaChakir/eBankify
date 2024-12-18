@@ -17,7 +17,7 @@ pipeline {
                 script {
                     deleteDir() // Nettoyer le workspace
                     echo "Clonage du dépôt Git..."
-                    sh '''
+                    bat '''
                         git clone -b devops https://github.com/latifaChakir/eBankify .
                         echo "Dépôt cloné avec succès."
                     '''
