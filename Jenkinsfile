@@ -39,8 +39,8 @@ pipeline {
                     echo "Version de Javac :"
                     javac -version
                     echo "Contenu du répertoire de travail :"
-                    pwd
-                    ls -la
+                    cd
+                    dir
                 '''
             }
         }
