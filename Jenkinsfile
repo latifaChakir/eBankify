@@ -45,26 +45,12 @@ pipeline {
                 '''
             }
         }
-        stage('Setup PostgreSQL') {
-                    steps {
-                        script {
-                            echo "Démarrage de PostgreSQL dans Docker..."
-                            bat '''
-                                docker-compose up -d postgres_db
-                                timeout /T 5
-                                docker exec postgres_db pg_isready -U postgres || (echo "PostgreSQL non prêt, réessai..." && timeout /T 5 && docker exec postgres_db pg_isready -U postgres)
-                                echo "PostgreSQL est prêt."
-                            '''
-                        }
-                    }
-                }
 
         stage('Build') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                bat 'mvn clean package'
             }
         }
-
 
         stage('Unit Tests') {
             steps {
