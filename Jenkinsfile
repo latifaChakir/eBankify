@@ -104,15 +104,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Exécuter le conteneur avec la configuration de port et les variables d'environnement
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").withRun('-p 8082:8080 -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/ebankify') { c ->
-                        // Ici, vous pouvez ajouter des instructions si besoin
-                        // Par exemple, pour afficher les logs du conteneur ou d'autres actions
+                    // Créer et exécuter le conteneur
+                    def image = docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    image.withRun('-p 8082:8080 -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/ebankify') { c ->
                         echo "Conteneur déployé avec succès !"
                     }
                 }
             }
         }
+
     }
 
     post {
