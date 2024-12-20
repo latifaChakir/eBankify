@@ -16,7 +16,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    deleteDir() // Nettoyer le workspace
+                    deleteDir()
                     echo "Clonage du dépôt Git..."
                     bat '''
                         git clone -b devops https://github.com/latifaChakir/eBankify .
@@ -50,7 +50,6 @@ pipeline {
              steps {
                  script {
                      try {
-                         // Vérifie si PostgreSQL est prêt
                          bat 'docker exec postgres_db pg_isready -U postgres'
                          echo 'PostgreSQL est prêt!'
                      } catch (Exception e) {
@@ -105,7 +104,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080')
+                    // Exécuter le conteneur avec la configuration de port et les variables d'environnement
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").withRun('-p 8082:8080 -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/ebankify -e SPRING_DATASOURCE_USERNAME=postgres -e SPRING_DATASOURCE_PASSWORD=latifa') { c ->
+                        // Ici, vous pouvez ajouter des instructions si besoin
+                        // Par exemple, pour afficher les logs du conteneur ou d'autres actions
+                        echo "Conteneur déployé avec succès !"
+                    }
                 }
             }
         }
