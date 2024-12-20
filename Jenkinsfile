@@ -97,7 +97,7 @@ pipeline {
                   }
                   bat '''
                       echo "Déploiement des services avec Docker Compose..."
-                      docker-compose up -d
+                      docker-compose up --build
                   '''
               }
           }
