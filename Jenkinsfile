@@ -6,7 +6,6 @@ pipeline {
     }
 
     environment {
-        SPRING_DATASOURCE_URL = 'jdbc:postgresql://localhost:5432/ebankify'
         DOCKER_IMAGE = 'banking-system'
         DOCKER_TAG = "${BUILD_NUMBER}"
         SONAR_TOKEN = credentials('sonar-token')
@@ -16,7 +15,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    deleteDir()
+                    deleteDir() // Nettoyer le workspace
                     echo "Clonage du dépôt Git..."
                     bat '''
                         git clone -b devops https://github.com/latifaChakir/eBankify .
