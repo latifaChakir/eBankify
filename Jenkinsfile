@@ -39,11 +39,25 @@ pipeline {
                     java -version
                     echo "Version de Javac :"
                     javac -version
+                    echo %SONAR_TOKEN%
                     echo "Contenu du répertoire de travail :"
+                    cd
                     dir
                 '''
             }
         }
+         stage('Test PostgreSQL Connection') {
+             steps {
+                 script {
+                     try {
+                         bat 'docker exec postgres_db pg_isready -U postgres'
+                         echo 'PostgreSQL est prêt!'
+                     } catch (Exception e) {
+                         error 'PostgreSQL n\'est pas accessible.'
+                     }
+                 }
+             }
+         }
 
         stage('Build') {
             steps {
@@ -62,13 +76,13 @@ pipeline {
             }
         }
 
-        stage('Code Quality Analysis') {
-            steps {
-                bat '''
+       stage('Code Quality Analysis') {
+           steps {
+               bat '''
                     mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=${env.SONAR_TOKEN}
-                '''
-            }
-        }
+               '''
+           }
+       }
 
         stage('Build Docker Image') {
             steps {
@@ -87,22 +101,13 @@ pipeline {
             }
         }
 
-      stage('Deploy') {
-          steps {
-              script {
-                  try {
-                      bat 'docker ps -a | find "postgres_db" && docker rm -f postgres_db'
-                  } catch (Exception e) {
-                      echo "Pas de conteneur postgres_db existant."
-                  }
-                  bat '''
-                      echo "Déploiement des services avec Docker Compose..."
-                      docker-compose up --build
-                  '''
-              }
-          }
-      }
-
+        stage('Deploy') {
+            steps {
+                script {
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080')
+                }
+            }
+        }
     }
 
     post {
