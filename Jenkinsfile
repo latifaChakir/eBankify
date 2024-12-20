@@ -46,18 +46,19 @@ pipeline {
                 '''
             }
         }
-         stage('Test PostgreSQL Connection') {
-             steps {
-                 script {
-                     try {
-                         bat 'docker exec postgres_db pg_isready -U postgres'
-                         echo 'PostgreSQL est prêt!'
-                     } catch (Exception e) {
-                         error 'PostgreSQL n\'est pas accessible.'
-                     }
-                 }
-             }
-         }
+
+        stage('Test PostgreSQL Connection') {
+            steps {
+                script {
+                    try {
+                        bat 'docker exec postgres_db pg_isready -U postgres'
+                        echo 'PostgreSQL est prêt!'
+                    } catch (Exception e) {
+                        error 'PostgreSQL n\'est pas accessible.'
+                    }
+                }
+            }
+        }
 
         stage('Build') {
             steps {
@@ -76,13 +77,13 @@ pipeline {
             }
         }
 
-       stage('Code Quality Analysis') {
-           steps {
-               bat '''
+        stage('Code Quality Analysis') {
+            steps {
+                bat '''
                     mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=${env.SONAR_TOKEN}
-               '''
-           }
-       }
+                '''
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -104,15 +105,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Créer et exécuter le conteneur
-                    def image = docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                    image.withRun('-p 8082:8080 -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/ebankify') { c ->
-                        echo "Conteneur déployé avec succès !"
-                    }
+                    // Correctly format the database URL for the Docker container
+                    def dbUrl = "${SPRING_DATASOURCE_URL}"
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080 -e SPRING_DATASOURCE_URL=${dbUrl}')
                 }
             }
         }
-
     }
 
     post {
