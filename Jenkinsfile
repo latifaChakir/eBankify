@@ -85,15 +85,14 @@ pipeline {
             }
         }
 
-       stage('Build Docker Image') {
-           steps {
-               script {
-                   // Build the Docker image with the correct network settings
-                   docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", "--network=my-network .")
-                   docker.build("${DOCKER_IMAGE}:latest", "--network=my-network .")
-               }
-           }
-       }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE}:latest")
+                }
+            }
+        }
 
         stage('Manual Approval') {
             steps {
@@ -103,14 +102,14 @@ pipeline {
             }
         }
 
-     stage('Deploy') {
-         steps {
-             script {
-                 def dbUrl = "jdbc:postgresql://postgres_db:5432/ebankify"
-                 docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080 -e SPRING_DATASOURCE_URL=${dbUrl}')
-             }
-         }
-     }
+        stage('Deploy') {
+            steps {
+                script {
+                    def dbUrl = "jdbc:postgresql://postgres_db:5432/ebankify"
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080 -e SPRING_DATASOURCE_URL=${dbUrl}')
+                }
+            }
+        }
     }
 
     post {
