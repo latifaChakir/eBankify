@@ -46,22 +46,18 @@ pipeline {
             }
         }
         stage('Setup PostgreSQL') {
-            steps {
-                script {
-                    echo "Démarrage de PostgreSQL dans Docker..."
-                    bat '''
-                        set -e  # Arrête le script si une commande échoue
-                        docker-compose up -d postgres_db
-                        until docker exec postgres_db pg_isready -U postgres; do
-                            echo "Attente de PostgreSQL..."
-                            sleep 5
-                        done
-                        echo "PostgreSQL est prêt."
-                    '''
+                    steps {
+                        script {
+                            echo "Démarrage de PostgreSQL dans Docker..."
+                            bat '''
+                                docker-compose up -d postgres_db
+                                timeout /T 5
+                                docker exec postgres_db pg_isready -U postgres || (echo "PostgreSQL non prêt, réessai..." && timeout /T 5 && docker exec postgres_db pg_isready -U postgres)
+                                echo "PostgreSQL est prêt."
+                            '''
+                        }
+                    }
                 }
-            }
-        }
-
 
         stage('Build') {
             steps {
