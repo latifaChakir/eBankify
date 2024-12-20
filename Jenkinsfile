@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        SPRING_DATASOURCE_URL = 'jdbc:postgresql://localhost:5432/ebankify'
+        SPRING_DATASOURCE_URL = 'jdbc:postgresql://postgres_db:5432/ebankify' // URL mise à jour
         DOCKER_IMAGE = 'banking-system'
         DOCKER_TAG = "${BUILD_NUMBER}"
         SONAR_TOKEN = credentials('sonar-token')
@@ -88,8 +88,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                    docker.build("${DOCKER_IMAGE}:latest")
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", ".")
+                    docker.build("${DOCKER_IMAGE}:latest", ".")
                 }
             }
         }
@@ -105,7 +105,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    def dbUrl = "jdbc:postgresql://postgres_db:5432/ebankify"
+                    def dbUrl = "${SPRING_DATASOURCE_URL}"
                     docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080 -e SPRING_DATASOURCE_URL=${dbUrl}')
                 }
             }
