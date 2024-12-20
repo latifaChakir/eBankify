@@ -105,8 +105,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Correctly format the database URL for the Docker container
-                    def dbUrl = "${SPRING_DATASOURCE_URL}"
+                    def dbUrl = "jdbc:postgresql://postgres_db:5432/ebankify"
                     docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080 -e SPRING_DATASOURCE_URL=${dbUrl}')
                 }
             }
