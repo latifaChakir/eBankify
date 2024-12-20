@@ -39,9 +39,7 @@ pipeline {
                     java -version
                     echo "Version de Javac :"
                     javac -version
-                    echo %SONAR_TOKEN%
                     echo "Contenu du répertoire de travail :"
-                    cd
                     dir
                 '''
             }
@@ -105,8 +103,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    def dbUrl = "jdbc:postgresql://postgres_db:5432/ebankify"
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080 -e SPRING_DATASOURCE_URL=${dbUrl}')
+                    bat '''
+                        echo "Arrêt des anciens conteneurs..."
+                        docker-compose down || true
+
+                        echo "Déploiement des services avec Docker Compose..."
+                        docker-compose up -d
+                    '''
                 }
             }
         }
