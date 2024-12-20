@@ -3,6 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven'
+        git 'Git'
     }
 
     environment {
@@ -14,17 +15,17 @@ pipeline {
 
     stages {
         stage('Checkout') {
-                    steps {
-                        script {
-                            deleteDir()
-                            echo "Clonage du dépôt Git..."
-                            // Utilisez le bloc git pour cloner le dépôt avec les credentials
-                            git branch: 'devops', url: 'https://github.com/latifaChakir/eBankify', credentialsId: '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'
-                            echo "Dépôt cloné avec succès."
-                        }
-                    }
+            steps {
+                script {
+                    deleteDir()
+                    echo "Clonage du dépôt Git..."
+                    bat '''
+                        git clone -b devops https://github.com/latifaChakir/eBankify .
+                        echo "Dépôt cloné avec succès."
+                    '''
                 }
-
+            }
+        }
 
         stage('Environment Check') {
             steps {
