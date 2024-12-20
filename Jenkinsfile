@@ -45,12 +45,6 @@ pipeline {
                 '''
             }
         }
-
-        stage('Build') {
-            steps {
-                bat 'mvn clean package'
-            }
-        }
         stage('Wait for PostgreSQL') {
             steps {
                 script {
@@ -67,6 +61,13 @@ pipeline {
                 }
             }
         }
+
+        stage('Build') {
+            steps {
+                bat 'mvn clean package'
+            }
+        }
+
 
         stage('Unit Tests') {
             steps {
