@@ -87,19 +87,22 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    bat '''
-                        echo "Arrêt des anciens conteneurs..."
-                        docker-compose down || true
+      stage('Deploy') {
+          steps {
+              script {
+                  try {
+                      bat 'docker ps -a | find "postgres_db" && docker rm -f postgres_db'
+                  } catch (Exception e) {
+                      echo "Pas de conteneur postgres_db existant."
+                  }
+                  bat '''
+                      echo "Déploiement des services avec Docker Compose..."
+                      docker-compose up -d
+                  '''
+              }
+          }
+      }
 
-                        echo "Déploiement des services avec Docker Compose..."
-                        docker-compose up -d
-                    '''
-                }
-            }
-        }
     }
 
     post {
