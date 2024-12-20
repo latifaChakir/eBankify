@@ -45,22 +45,6 @@ pipeline {
                 '''
             }
         }
-        stage('Wait for PostgreSQL') {
-            steps {
-                script {
-                    timeout(time: 1, unit: 'MINUTES') {
-                        waitUntil {
-                            try {
-                                bat 'docker exec postgres_db pg_isready -U postgres'
-                                return true
-                            } catch (Exception e) {
-                                return false
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         stage('Build') {
             steps {
