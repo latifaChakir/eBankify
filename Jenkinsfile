@@ -10,7 +10,6 @@ pipeline {
         DOCKER_IMAGE = 'banking-system'
         DOCKER_TAG = "${BUILD_NUMBER}"
         SONAR_TOKEN = credentials('sonar-token')
-        DOCKER_BUILDKIT = '0'
     }
 
     stages {
@@ -86,15 +85,15 @@ pipeline {
             }
         }
 
-      stage('Build Docker Image') {
-          steps {
-              script {
-                  // Build the Docker image without network settings
-                  docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", ".")
-                  docker.build("${DOCKER_IMAGE}:latest", ".")
-              }
-          }
-      }
+       stage('Build Docker Image') {
+           steps {
+               script {
+                   // Build the Docker image with the correct network settings
+                   docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", "--network=my-network .")
+                   docker.build("${DOCKER_IMAGE}:latest", "--network=my-network .")
+               }
+           }
+       }
 
         stage('Manual Approval') {
             steps {
@@ -108,7 +107,7 @@ pipeline {
          steps {
              script {
                  def dbUrl = "jdbc:postgresql://postgres_db:5432/ebankify"
-                 docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('--network=my-network -p 8082:8080 -e SPRING_DATASOURCE_URL=${dbUrl}')
+                 docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-p 8082:8080 -e SPRING_DATASOURCE_URL=${dbUrl}')
              }
          }
      }
