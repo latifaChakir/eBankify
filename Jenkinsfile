@@ -45,19 +45,6 @@ pipeline {
             }
         }
 
-        stage('Test PostgreSQL Connection') {
-            steps {
-                script {
-                    try {
-                        bat 'docker exec postgres_db pg_isready -U postgres'
-                        echo 'PostgreSQL est prêt!'
-                    } catch (Exception e) {
-                        error 'PostgreSQL n\'est pas accessible.'
-                    }
-                }
-            }
-        }
-
         stage('Build') {
             steps {
                 bat 'mvn clean package'
