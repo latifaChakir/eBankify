@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven' //assurer 
+        maven 'Maven' 
     }
 
     environment {
