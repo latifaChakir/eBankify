@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         SPRING_DATASOURCE_URL = 'jdbc:postgresql://localhost:5432/ebankify'
-        DOCKER_IMAGE = 'banking-system' //assurer que image name
+        DOCKER_IMAGE = 'banking-system' //assurer 
         DOCKER_TAG = "${BUILD_NUMBER}"
         SONAR_TOKEN = credentials('sonar-token')
     }
