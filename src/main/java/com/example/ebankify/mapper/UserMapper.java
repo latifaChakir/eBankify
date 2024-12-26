@@ -5,6 +5,8 @@ import com.example.ebankify.domain.entities.Role;
 import com.example.ebankify.domain.entities.User;
 import com.example.ebankify.domain.requests.UserRequest;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Set;
@@ -13,6 +15,9 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserDto toDto(User user);
+    @Mappings({
+            @Mapping(target = "roles", source = "user.roles")
+    })
     UserAuthDto toUserAuthDto(User user);
     User toEntity(UserDto userDto);
     User toEntity(UserRequest userRequest);

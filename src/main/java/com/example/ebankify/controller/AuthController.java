@@ -37,7 +37,7 @@ public class AuthController {
         UserAuthDto userDto = userService.login(loginRequest);
         UserAuthVm response = UserAuthVm.builder()
                 .user(userDto)
-                .message("Login successful ")
+                .message("Login successful")
                 .statusCode(HttpStatus.OK.value())
                 .build();
         return ResponseEntity.ok(response);

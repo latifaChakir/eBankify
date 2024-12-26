@@ -14,13 +14,12 @@ import java.util.Map;
 import java.util.function.Function;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
-
+@Service
 public class JwtService {
     final long jwtExpiration = 3600000L; // 1 hour expiration
     private String secretKey = "thisIsA256BitLongKeyForJWTs12345678"; // Example 256-bit key
 
     public String generateToken(UserDetails userDetails, Long userId) {
-        System.out.println("Generating token for user: " + userDetails.getUsername() + ", userId: " + userId);
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         return buildToken(claims, userDetails, jwtExpiration);

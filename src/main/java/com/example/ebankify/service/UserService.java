@@ -31,43 +31,39 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
+    private final JwtService jwtService;
 
     public UserAuthDto register(RegisterRequest registerRequest) {
-        try {
-            System.out.println("Registering user: " + registerRequest);
-            if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-                throw new EmailAlreadyInUseException("Email already in use");
-            }
-
-            User user = User.builder()
-                    .name(registerRequest.getName())
-                    .age(registerRequest.getAge())
-                    .email(registerRequest.getEmail())
-                    .active(registerRequest.isActive())
-//                    .password(passwordEncoder.encode(registerRequest.getPassword()))
-                    .roles(new HashSet<>())
-                    .build();
-
-            Set<Role> roles = registerRequest.getRoles().stream()
-                    .distinct()
-                    .map(roleId -> roleRepository.findById(roleId)
-                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
-                    .collect(Collectors.toSet());
-
-            user.getRoles().addAll(roles);
-
-            User savedUser = userRepository.save(user);
-//            String token = jwtService.generateToken(savedUser, savedUser.getId());
-            UserAuthDto userDto = userMapper.toUserAuthDto(savedUser);
-//            userDto.setToken(token);
-
-            return userDto;
-        } catch (Exception e) {
-            System.out.println("Error during registration: " + e.getMessage());
-            throw new RuntimeException("Registration failed", e);
+        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+            throw new EmailAlreadyInUseException("Email already in use");
         }
+
+        // Créez l'utilisateur et effectuez d'autres vérifications
+        User user = User.builder()
+                .name(registerRequest.getName())
+                .age(registerRequest.getAge())
+                .email(registerRequest.getEmail())
+                .active(registerRequest.isActive())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .roles(new HashSet<>()) // Initialize with an empty set
+                .build();
+
+        // Ajout des rôles et sauvegarde de l'utilisateur
+        Set<Role> roles = registerRequest.getRoles().stream()
+                .map(roleId -> roleRepository.findById(roleId)
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
+                .collect(Collectors.toSet());
+
+        user.getRoles().addAll(roles);
+
+        User savedUser = userRepository.save(user);
+        String token = jwtService.generateToken(savedUser, savedUser.getId());
+        UserAuthDto userDto = userMapper.toUserAuthDto(savedUser);
+        userDto.setToken(token);
+
+        return userDto;
     }
-    public UserAuthDto login(LoginRequest loginRequest)  {
+    public UserAuthDto login(LoginRequest loginRequest) {
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
         if (userOptional.isEmpty()) {
@@ -75,15 +71,14 @@ public class UserService {
         }
 
         User user = userOptional.get();
-//        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-//            throw new InvalidCredentialsException("Invalid email or password.");
-//        }
-//        String token = jwtService.generateToken(user, user.getId());
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password.");
+        }
+        String token = jwtService.generateToken(user, user.getId());
         UserAuthDto userDto = userMapper.toUserAuthDto(user);
-//        userDto.setToken(token);
+        userDto.setToken(token);
         return userDto;
     }
-
     public UserDto save(UserRequest userRequest) {
         if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
             throw new EmailAlreadyInUseException("Email already in use");
