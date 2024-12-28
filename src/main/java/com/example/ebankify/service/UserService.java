@@ -116,12 +116,15 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
-        if (userRepository.findById(id).isEmpty()) {
-            throw new UserNotFoundException("User not found");
-        }
-        System.out.println("id pour supprimer "+id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        user.getRoles().clear();
+        userRepository.save(user); // Mettre à jour la table de jointure
         userRepository.deleteById(id);
+        System.out.println("Utilisateur avec l'ID " + id + " supprimé avec succès.");
     }
+
 
     public UserDto update(Long id, UserRequest userRequest) {
             Optional<User> userOptional = userRepository.findById(id);
