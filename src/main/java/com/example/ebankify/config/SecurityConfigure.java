@@ -28,12 +28,10 @@ public class SecurityConfigure {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/**").hasRole("USER")
-                        .requestMatchers("/api/employee/**").hasRole("EMPLOYEE")
-                        .requestMatchers("/api/auth/**", "/api/accounts/**", "/api/transactions/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthentificationFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,4 +37,8 @@ public interface UserMapper {
         role.setId(Math.toIntExact(roleId));
         return role;
     }
+    @Mappings({
+            @Mapping(target = "roles", source = "user.roles")
+    })
+    List<UserDto> toDtoList(List<User> users);
 }

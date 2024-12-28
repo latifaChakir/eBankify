@@ -42,4 +42,12 @@ public class AuthController {
                 .build();
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/current-user")
+    public ResponseEntity<UserAuthDto> getCurrentUser(@RequestHeader("Authorization") String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        UserAuthDto currentUser = userService.getCurrentUser(token);
+        return ResponseEntity.ok(currentUser);
+    }
 }

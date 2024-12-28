@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -108,6 +109,11 @@ public class UserService {
         }
         return userMapper.toDto(userOptional.get());
     }
+    public List<UserDto> findAll(){
+        List<User> users = userRepository.findAll();
+        return userMapper.toDtoList(users);
+
+    }
 
     public void deleteById(Long id) {
         if (userRepository.findById(id).isEmpty()) {
@@ -154,5 +160,12 @@ public class UserService {
         User user = userOptional.get();
         user.setActive(true);
         userRepository.save(user);
+    }
+    public UserAuthDto getCurrentUser(String token) {
+        Long userId = jwtService.extractUserId(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return userMapper.toUserAuthDto(user);
     }
 }
