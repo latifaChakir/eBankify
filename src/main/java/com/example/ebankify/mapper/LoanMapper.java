@@ -13,6 +13,7 @@ public interface LoanMapper {
     LoanMapper Instance = Mappers.getMapper(LoanMapper.class);
     LoanDTO toDto(Loan loan);
     Loan toEntity(LoanDTO loanDto);
+
     Loan toEntity(LoanRequest loanRequest);
 
     List<LoanDTO> toDtoList(List<Loan> loans);

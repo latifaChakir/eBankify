@@ -1,6 +1,7 @@
 package com.example.ebankify.controller;
 
 import com.example.ebankify.domain.dtos.AccountDTO;
+import com.example.ebankify.domain.dtos.BankDto;
 import com.example.ebankify.domain.requests.AccountRequest;
 import com.example.ebankify.domain.vm.AccountVM;
 import com.example.ebankify.service.AccountService;
@@ -66,5 +67,11 @@ public class AccountController {
                 .build();
         return ResponseEntity.ok(accountVM);
     }
+    @GetMapping("/banks")
+    public ResponseEntity<List<BankDto>> getAllBanks() {
+        List<BankDto> banks = accountService.getAllBanks();
+        return ResponseEntity.ok(banks);
+    }
+
 
 }

@@ -18,7 +18,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class InvoiceController {
-    private InvoiceService invoiceService;
+    private final InvoiceService invoiceService;
     @PostMapping("/save")
     public ResponseEntity<InvoiceVM> saveInvoice(@Valid @RequestBody InvoiceRequest invoiceRequest) {
         InvoiceDTO invoiceDTO = invoiceService.saveInvoice(invoiceRequest);

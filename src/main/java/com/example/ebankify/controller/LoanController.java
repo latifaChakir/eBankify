@@ -17,7 +17,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class LoanController {
-    private LoanService loanService;
+    private final LoanService loanService;
     @PostMapping("/save")
     public ResponseEntity<LoanVM> saveLoan(@Valid @RequestBody LoanRequest loanRequest){
         LoanDTO loanDTO = loanService.saveLoan(loanRequest);
