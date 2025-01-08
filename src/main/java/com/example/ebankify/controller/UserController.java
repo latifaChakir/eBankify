@@ -35,7 +35,7 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserVM> getUserById (@PathVariable Long id) {
         UserDto userDto = userService.findById(id);

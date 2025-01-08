@@ -23,20 +23,20 @@ public interface UserMapper {
     User toEntity(UserDto userDto);
     User toEntity(UserRequest userRequest);
 
-    default Set<Role> map(Set<Long> roleIds) {
-        if (roleIds == null) {
-            return null;
+        default Set<Role> map(Set<Long> roleIds) {
+            if (roleIds == null) {
+                return null;
+            }
+            return roleIds.stream()
+                    .map(this::mapRoleIdToRole)
+                    .collect(Collectors.toSet());
         }
-        return roleIds.stream()
-                .map(this::mapRoleIdToRole)
-                .collect(Collectors.toSet());
-    }
 
-    default Role mapRoleIdToRole(Long roleId) {
-        Role role = new Role();
-        role.setId(Math.toIntExact(roleId));
-        return role;
-    }
+        default Role mapRoleIdToRole(Long roleId) {
+            Role role = new Role();
+            role.setId(Math.toIntExact(roleId));
+            return role;
+        }
     @Mappings({
             @Mapping(target = "roles", source = "user.roles")
     })
