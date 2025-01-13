@@ -41,7 +41,7 @@ public class InvoiceController {
     }
 //    @PutMapping("/update/{id}")
 //    public ResponseEntity<InvoiceResponse> updateInvoice(@PathVariable Long id, @Valid @RequestBody InvoiceRequest invoiceRequest) {
-//        InvoiceDTO invoiceDTO = invoiceService.updateInvoice(id, invoiceRequest);
+//        InvoiceDTO invoiceDTO = invoiceService.updateIn<voice(id, invoiceRequest);
 //        InvoiceResponse invoiceResponse = InvoiceResponse.builder()
 //                .invoiceDTO(invoiceDTO)
 //                .message("Invoice updated successfully")

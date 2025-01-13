@@ -31,8 +31,6 @@ public class TransactionRequest {
 
     @NotNull(message = "L'identifiant du compte de destination ne peut pas être nul")
     private Long destinationAccountId;
-
-    @Future(message = "La date de prochaine exécution doit être dans le futur")
     private LocalDate nextExecutionDate;
 
     @AssertTrue(message = "La date de prochaine exécution doit être fournie pour une transaction planifiée")

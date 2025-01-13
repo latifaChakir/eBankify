@@ -142,6 +142,10 @@ public class TransactionService {
         return transactionMapper.toDTO(transaction);
     }
     public void deleteTransaction(Long transactionId) {
+        Optional<Transaction> transactionOptional = transactionRepository.findById(transactionId);
+        if (!transactionOptional.isPresent()) {
+            throw new TransactionNotFoundException("Transaction introuvable");
+        }
         transactionRepository.deleteById(transactionId);
     }
     public List<TransactionDTO> getAllTransactions(){
