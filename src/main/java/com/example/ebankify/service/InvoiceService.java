@@ -10,23 +10,25 @@ import com.example.ebankify.mapper.UserMapper;
 import com.example.ebankify.repository.InvoiceRepository;
 import com.example.ebankify.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InvoiceService {
-    private InvoiceRepository invoiceRepository;
-    private InvoiceMapper invoiceMapper;
-    private UserRepository userRepository;
-    private UserMapper userMapper;
+    private final InvoiceRepository invoiceRepository;
+    private final InvoiceMapper invoiceMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public InvoiceDTO saveInvoice(InvoiceRequest invoiceRequest) {
+        System.out.println("ok");
         Invoice invoice = invoiceMapper.toEntity(invoiceRequest);
         User user = userRepository.findById(invoiceRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-
+        System.out.println("o2k");
         invoice.setUser(user);
         Invoice savedInvoice=invoiceRepository.save(invoice);
         InvoiceDTO invoiceDTO = invoiceMapper.toDto(savedInvoice);

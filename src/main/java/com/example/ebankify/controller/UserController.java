@@ -1,22 +1,30 @@
 package com.example.ebankify.controller;
 
 import com.example.ebankify.domain.dtos.UserDto;
+import com.example.ebankify.domain.entities.User;
 import com.example.ebankify.domain.requests.UserRequest;
 import com.example.ebankify.domain.vm.UserVM;
+import com.example.ebankify.repository.UserRepository;
 import com.example.ebankify.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "http://localhost:4200")
 @AllArgsConstructor
 public class UserController {
+    private final UserRepository userRepository;
     private UserService userService;
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<UserVM> saveUser(@Valid @RequestBody UserRequest userRequest) {
         UserDto userDto=userService.save(userRequest);
@@ -27,7 +35,7 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
-
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserVM> getUserById (@PathVariable Long id) {
         UserDto userDto = userService.findById(id);
@@ -48,6 +56,8 @@ public class UserController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
+//    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<UserVM> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
@@ -75,5 +85,10 @@ public class UserController {
                 .statusCode(HttpStatus.OK.value())
                 .build();
         return ResponseEntity.ok(response);
+    }
+    @GetMapping()
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> userDtos = userService.findAll();
+        return ResponseEntity.ok(userDtos);
     }
 }

@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,9 +35,9 @@ public class UserRequest {
     private int creditScore;
 
     @NotNull(message = "Le rôle ne peut pas être nul")
-    private Role role;
-
+    private Set<Long> roles;
     @NotNull(message = "Le statut d'activation ne peut pas être nul")
     private boolean active;
+
 
 }

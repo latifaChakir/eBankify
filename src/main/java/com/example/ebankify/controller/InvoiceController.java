@@ -6,6 +6,7 @@ import com.example.ebankify.domain.vm.InvoiceVM;
 import com.example.ebankify.service.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/invoices")
-@CrossOrigin(origins = "http://localhost:8080")
-@AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
+@RequiredArgsConstructor
 public class InvoiceController {
-    private InvoiceService invoiceService;
+    private final InvoiceService invoiceService;
     @PostMapping("/save")
     public ResponseEntity<InvoiceVM> saveInvoice(@Valid @RequestBody InvoiceRequest invoiceRequest) {
         InvoiceDTO invoiceDTO = invoiceService.saveInvoice(invoiceRequest);
@@ -40,7 +41,7 @@ public class InvoiceController {
     }
 //    @PutMapping("/update/{id}")
 //    public ResponseEntity<InvoiceResponse> updateInvoice(@PathVariable Long id, @Valid @RequestBody InvoiceRequest invoiceRequest) {
-//        InvoiceDTO invoiceDTO = invoiceService.updateInvoice(id, invoiceRequest);
+//        InvoiceDTO invoiceDTO = invoiceService.updateIn<voice(id, invoiceRequest);
 //        InvoiceResponse invoiceResponse = InvoiceResponse.builder()
 //                .invoiceDTO(invoiceDTO)
 //                .message("Invoice updated successfully")

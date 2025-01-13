@@ -1,74 +1,104 @@
 package com.example.ebankify.service;
 
+import com.example.ebankify.domain.dtos.UserAuthDto;
 import com.example.ebankify.domain.dtos.UserDto;
+import com.example.ebankify.domain.entities.Role;
 import com.example.ebankify.domain.entities.User;
-import com.example.ebankify.domain.enums.Role;
 import com.example.ebankify.domain.requests.LoginRequest;
 import com.example.ebankify.domain.requests.RegisterRequest;
 import com.example.ebankify.domain.requests.UserRequest;
 import com.example.ebankify.exception.EmailAlreadyInUseException;
+import com.example.ebankify.exception.InvalidCredentialsException;
 import com.example.ebankify.exception.UserNotFoundException;
 import com.example.ebankify.mapper.UserMapper;
+import com.example.ebankify.repository.RoleRepository;
 import com.example.ebankify.repository.UserRepository;
+import com.example.ebankify.security.JwtService;
+import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class UserService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final RoleRepository roleRepository;
+    private final JwtService jwtService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    public UserDto register(RegisterRequest registerRequest) {
+    public UserAuthDto register(RegisterRequest registerRequest) {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw new EmailAlreadyInUseException("Email already in use");
         }
 
+        // Créez l'utilisateur et effectuez d'autres vérifications
         User user = User.builder()
                 .name(registerRequest.getName())
                 .age(registerRequest.getAge())
                 .email(registerRequest.getEmail())
                 .active(registerRequest.isActive())
-                .password(BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt()))
-                .monthlyIncome(registerRequest.getMonthlyIncome())
-                .creditScore(registerRequest.getCreditScore())
-                .role(Role.valueOf(String.valueOf(registerRequest.getRole()).toUpperCase()))
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .roles(new HashSet<>()) // Initialize with an empty set
                 .build();
 
-        User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
-    }
+        // Ajout des rôles et sauvegarde de l'utilisateur
+        Set<Role> roles = registerRequest.getRoles().stream()
+                .map(roleId -> roleRepository.findById(roleId)
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
+                .collect(Collectors.toSet());
 
-    public UserDto login(LoginRequest loginRequest) {
+        user.getRoles().addAll(roles);
+
+        User savedUser = userRepository.save(user);
+        String token = jwtService.generateToken(savedUser, savedUser.getId());
+        UserAuthDto userDto = userMapper.toUserAuthDto(savedUser);
+        userDto.setToken(token);
+
+        return userDto;
+    }
+    public UserAuthDto login(LoginRequest loginRequest) {
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
 
         User user = userOptional.get();
-        if (!BCrypt.checkpw(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password.");
         }
-
-        return userMapper.toDto(user);
+        String token = jwtService.generateToken(user, user.getId());
+        UserAuthDto userDto = userMapper.toUserAuthDto(user);
+        userDto.setToken(token);
+        return userDto;
     }
-
     public UserDto save(UserRequest userRequest) {
         if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
             throw new EmailAlreadyInUseException("Email already in use");
         }
-        userRequest.setPassword(BCrypt.hashpw(userRequest.getPassword(), BCrypt.gensalt()));
-        userRequest.setActive(true);
-        User user = userMapper.toEntity(userRequest);
-        User savedUser = userRepository.save(user);
+        if (userRequest.getRoles() == null || userRequest.getRoles().isEmpty()) {
+            throw new RuntimeException("Roles cannot be null or empty");
+        }
+        Set<Role> roles = userRequest.getRoles().stream()
+                .distinct()
+                .map(roleId -> roleRepository.findById(roleId)
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
+                .collect(Collectors.toSet());
 
+        User user = userMapper.toEntity(userRequest);
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        user.setActive(true);
+        user.setRoles(new HashSet<>(roles));
+
+        User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }
 
@@ -79,14 +109,22 @@ public class UserService {
         }
         return userMapper.toDto(userOptional.get());
     }
+    public List<UserDto> findAll(){
+        List<User> users = userRepository.findAll();
+        return userMapper.toDtoList(users);
+
+    }
 
     public void deleteById(Long id) {
-        if (userRepository.findById(id).isEmpty()) {
-            throw new UserNotFoundException("User not found");
-        }
-        System.out.println("id pour supprimer "+id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        user.getRoles().clear();
+        userRepository.save(user); // Mettre à jour la table de jointure
         userRepository.deleteById(id);
+        System.out.println("Utilisateur avec l'ID " + id + " supprimé avec succès.");
     }
+
 
     public UserDto update(Long id, UserRequest userRequest) {
             Optional<User> userOptional = userRepository.findById(id);
@@ -100,7 +138,6 @@ public class UserService {
             user.setActive(userRequest.isActive());
             user.setMonthlyIncome(userRequest.getMonthlyIncome());
             user.setCreditScore(userRequest.getCreditScore());
-            user.setRole(Role.valueOf(String.valueOf(userRequest.getRole()).toUpperCase()));
             if (userRequest.getPassword() != null && !userRequest.getPassword().isEmpty()) {
                 user.setPassword(BCrypt.hashpw(userRequest.getPassword(), BCrypt.gensalt()));
             }
@@ -126,5 +163,12 @@ public class UserService {
         User user = userOptional.get();
         user.setActive(true);
         userRepository.save(user);
+    }
+    public UserAuthDto getCurrentUser(String token) {
+        Long userId = jwtService.extractUserId(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return userMapper.toUserAuthDto(user);
     }
 }

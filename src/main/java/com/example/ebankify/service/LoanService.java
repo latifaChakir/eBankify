@@ -11,17 +11,18 @@ import com.example.ebankify.mapper.UserMapper;
 import com.example.ebankify.repository.LoanRepository;
 import com.example.ebankify.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LoanService {
-    private LoanRepository loanRepository;
-    private LoanMapper loanMapper;
-    private UserRepository userRepository;
-    private UserMapper userMapper;
+    private final LoanRepository loanRepository;
+    private final LoanMapper loanMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public LoanDTO saveLoan(LoanRequest loanRequest) {
         Loan loan = loanMapper.toEntity(loanRequest);

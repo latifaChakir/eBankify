@@ -6,6 +6,7 @@ import com.example.ebankify.domain.vm.LoanVM;
 import com.example.ebankify.service.LoanService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,10 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/loans")
-@CrossOrigin(origins = "http://localhost:8080")
-@AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
+@RequiredArgsConstructor
 public class LoanController {
-    private LoanService loanService;
+    private final LoanService loanService;
     @PostMapping("/save")
     public ResponseEntity<LoanVM> saveLoan(@Valid @RequestBody LoanRequest loanRequest){
         LoanDTO loanDTO = loanService.saveLoan(loanRequest);

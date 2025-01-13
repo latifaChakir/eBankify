@@ -6,6 +6,7 @@ import com.example.ebankify.domain.vm.TransactionVM;
 import com.example.ebankify.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/transactions")
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "http://localhost:4200")
 @AllArgsConstructor
 public class TransactionController {
-    @Autowired
     private TransactionService transactionService;
     @PostMapping("/save")
     public ResponseEntity<TransactionVM> saveTransaction(@Valid @RequestBody TransactionRequest transactionRequest) {

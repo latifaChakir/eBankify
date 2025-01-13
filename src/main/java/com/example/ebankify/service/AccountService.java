@@ -1,6 +1,7 @@
 package com.example.ebankify.service;
 
 import com.example.ebankify.domain.dtos.AccountDTO;
+import com.example.ebankify.domain.dtos.BankDto;
 import com.example.ebankify.domain.entities.Account;
 import com.example.ebankify.domain.entities.Bank;
 import com.example.ebankify.domain.entities.User;
@@ -12,21 +13,21 @@ import com.example.ebankify.mapper.UserMapper;
 import com.example.ebankify.repository.AccountRepository;
 import com.example.ebankify.repository.BankRepository;
 import com.example.ebankify.repository.UserRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccountService {
-    private  AccountRepository accountRepository;
-    private AccountMapper accountMapper;
-    private UserRepository userRepository;
-    private BankRepository bankRepository;
-    private UserMapper userMapper;
-    private BankMapper bankMapper;
+    private final AccountRepository accountRepository;
+    private final AccountMapper accountMapper;
+    private final UserRepository userRepository;
+    private final BankRepository bankRepository;
+    private final UserMapper userMapper;
+    private final BankMapper bankMapper;
 
     public AccountDTO createAccount(AccountRequest accountRequest) {
         Account account = accountMapper.toEntity(accountRequest);
@@ -76,5 +77,10 @@ public class AccountService {
     public List<AccountDTO> findAll(){
         List<Account> accounts = accountRepository.findAllWithUser();
         return accountMapper.toDtoList(accounts);
+    }
+
+    public List<BankDto> getAllBanks(){
+        List<Bank> banks = bankRepository.findAll();
+        return bankMapper.toDtoList(banks);
     }
 }

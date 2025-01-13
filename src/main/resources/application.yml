@@ -4,13 +4,45 @@ spring:
     username: postgres
     password: latifa
     driver-class-name: org.postgresql.Driver
-    jpa:
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
+  jpa:
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: true
-      format-sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    format-sql: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/BankApp
+          jwk-set-uri: http://localhost:8081/realms/BankApp/protocol/openid-connect/certs
+
+keycloak:
+  realm: BankApp
+  auth-server-url: http://localhost:8081/auth
+  resource: bank-app-client
+  public-client: false
+  credentials:
+    secret: "s4bRYEyhPS7aiYa0kodshJfBze5fxfSk"
+  bearer-only: false
+  ssl-required: external
+  admin:
+    username: admin
+    password: admin
+    client-id: bank-app-client
+    realm: BankApp
+  policy-enforcer-config:
+    enforcement-mode: ENFORCING
+
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:keystore.jks
+    key-store-password: Latifa-1234@
+    key-store-type: JKS
+    key-alias: tomcat
